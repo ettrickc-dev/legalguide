@@ -1,0 +1,19 @@
+name: Ping Google on Push
+ 
+on:
+  push:
+    branches: [main]
+    paths: ['**.html', 'sitemap.xml']
+ 
+jobs:
+  ping-google:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Google of sitemap update
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://easylegalfiling.com/legalguide/sitemap.xml"
+          echo "Google pinged successfully"
+      - name: Notify Bing
+        run: |
+          curl -s "https://www.bing.com/ping?sitemap=https://easylegalfiling.com/legalguide/sitemap.xml"
+          echo "Bing pinged successfully"
