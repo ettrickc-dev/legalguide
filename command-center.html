@@ -232,6 +232,7 @@ code,pre{font-family:'JetBrains Mono',monospace}
  
 .scroll-top{position:fixed;bottom:22px;right:20px;background:var(--ink);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .3s;z-index:100}
 .scroll-top.show{opacity:1}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @media(max-width:760px){.scroll-top{bottom:64px}}
  
 /* ─── NEW PANELS ─── */
@@ -387,61 +388,85 @@ code,pre{font-family:'JetBrains Mono',monospace}
     </div>
   </div>
  
-  <!-- STEP 2 — PLATFORM -->
+  <!-- STEP 2 — INTENT FILTER -->
   <div class="card">
-    <div class="card-head"><div class="card-title">Step 2 — Where are you posting?</div></div>
+    <div class="card-head"><div class="card-title">Step 2 — Intent Filter</div><div class="card-sub">Only generate for HIGH intent. These convert. Others waste time.</div></div>
     <div class="card-body">
-      <div class="plat-row">
-        <button class="pb sel-reddit" id="pb-reddit" onclick="selPlat('reddit')">🔴 Reddit</button>
-        <button class="pb" id="pb-quora" onclick="selPlat('quora')">🔵 Quora</button>
-        <button class="pb" id="pb-facebook" onclick="selPlat('facebook')">👥 Facebook</button>
-        <button class="pb" id="pb-tiktok" onclick="selPlat('tiktok')">🎵 TikTok</button>
-      </div>
-      <div style="background:var(--paper2);border-radius:var(--r-lg);padding:12px 14px;font-size:.82rem;color:var(--muted);line-height:1.6" id="plat-tip">
-        <strong style="color:var(--ink)">Reddit tip:</strong> Post in the correct subreddit (r/legaladvice, r/immigration, r/Divorce). Do NOT include a link in your first reply — Reddit flags this as spam. Give the answer first, mention the tool naturally. Links in comment body are fine if they appear organically in the flow of the answer.
+      <div class="intent-row">
+        <div class="intent-chip ic-high sel" onclick="selIntent(this,'high')">🔴 HIGH — Generate now<br><span style="font-weight:400;font-size:.7rem">"what do I do", "help", "urgent", "missed my court", "how to file"</span></div>
+        <div class="intent-chip ic-med" onclick="selIntent(this,'med')">🟡 MEDIUM — If time allows<br><span style="font-weight:400;font-size:.7rem">"should I", "is this legal", "thinking about"</span></div>
+        <div class="intent-chip ic-low" onclick="selIntent(this,'low')">⚪ LOW — Skip entirely<br><span style="font-weight:400;font-size:.7rem">General chat, no real problem stated</span></div>
       </div>
     </div>
   </div>
  
-  <!-- STEP 3 — INTENT + VARIANT -->
+  <!-- STEP 3 — GENERATE ALL PLATFORMS -->
   <div class="card">
     <div class="card-head">
-      <div><div class="card-title">Step 3 — Intent Score + Reply Angle</div><div class="card-sub">Only reply to HIGH intent posts. Choose which angle to use.</div></div>
+      <div><div class="card-title">Step 3 — Generate Today's Content for All Platforms</div><div class="card-sub">Generates 3–4 Reddit replies, 2 Quora answers, and 3 TikTok comments in one click. Each is unique — no repeats, no spam patterns.</div></div>
     </div>
     <div class="card-body">
-      <p style="font-size:.83rem;color:var(--muted);margin-bottom:10px"><strong style="color:var(--ink)">Intent Score — filter what you answer:</strong></p>
-      <div class="intent-row">
-        <div class="intent-chip ic-high sel" onclick="selIntent(this,'high')">🔴 HIGH — Answer immediately<br><span style="font-weight:400;font-size:.7rem">Posts with: "what do I do", "help", "urgent", "how much does", "how to file", "missed my court"</span></div>
-        <div class="intent-chip ic-med" onclick="selIntent(this,'med')">🟡 MEDIUM — Answer if time<br><span style="font-weight:400;font-size:.7rem">Posts with: "is this legal", "should I", "thinking about"</span></div>
-        <div class="intent-chip ic-low" onclick="selIntent(this,'low')">⚪ LOW — Skip<br><span style="font-weight:400;font-size:.7rem">General discussion, no specific problem, just chatting</span></div>
+      <div class="btn-row" style="margin-bottom:14px">
+        <button class="btn btn-primary" onclick="genAllPlatforms()" id="gen-btn" style="font-size:.9rem;padding:11px 22px">✨ Generate All Platforms for Today</button>
+        <button class="btn btn-ghost" onclick="openSearchForTopic()" id="search-btn">🔍 Open Search Page →</button>
       </div>
-      <div style="background:var(--red-lt);border:1px solid #fecaca;border-radius:var(--r);padding:10px 12px;font-size:.8rem;color:var(--red);font-weight:600;margin:8px 0 14px">
-        ⚠️ Only answer HIGH intent posts. MEDIUM and LOW waste your time. HIGH intent = someone with a real problem right now = they convert.
+      <div id="gen-loading" style="display:none;padding:16px 0;font-size:.85rem;color:var(--muted)">
+        <span style="margin-right:8px">⏳</span> Claude is writing fresh content… usually 10–15 seconds…
       </div>
-      <p style="font-size:.83rem;color:var(--muted);margin-bottom:8px"><strong style="color:var(--ink)">Reply angle — 3 different approaches for the same topic:</strong></p>
-      <div class="variant-row" id="variant-row">
-        <button class="var-btn active" onclick="selVariant(0)">Angle 1 — Urgency first</button>
-        <button class="var-btn" onclick="selVariant(1)">Angle 2 — Step-by-step</button>
-        <button class="var-btn" onclick="selVariant(2)">Angle 3 — Myth-busting</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="genReply()" id="gen-btn">✨ Generate Reply</button>
-        <button class="btn btn-ghost" onclick="openSearch()" id="search-btn">🔍 Open Search Page →</button>
-      </div>
-      <div id="copied-msg" class="copied-msg">✓ Copied to clipboard!</div>
-      <div class="reply-box" id="reply-box">
-        <div class="reply-box-label">Ready to copy — you post this manually on the platform above</div>
-        <div class="reply-text" id="reply-text"></div>
-        <div class="reply-actions">
-          <button class="btn btn-green btn-sm" onclick="copyReply()">📋 Copy Reply</button>
-          <button class="btn btn-ghost btn-sm" onclick="openSearch()">🔍 Open Search Page</button>
-          <button class="btn btn-ghost btn-sm" onclick="markPosted()">✅ Mark Posted — Next Angle</button>
+      <div id="gen-error" style="display:none;background:var(--red-lt);border:1px solid #fecaca;border-radius:var(--r);padding:10px 12px;font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:10px"></div>
+ 
+      <!-- REDDIT OUTPUT -->
+      <div id="reddit-section" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px;border-top:1px solid var(--border);padding-top:16px">
+          <span style="font-size:1.1rem">🔴</span>
+          <span style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);font-weight:700">Reddit Replies</span>
+          <span style="font-size:.7rem;background:#fff3ee;color:#cc3700;padding:2px 8px;border-radius:8px;font-weight:700">3–4 / DAY MAX PER SUBREDDIT</span>
         </div>
+        <div style="background:var(--orange-lt);border:1px solid #ffd0b8;border-radius:var(--r);padding:9px 12px;font-size:.77rem;color:var(--orange-dk);margin-bottom:10px;font-weight:600">
+          ⚡ Spread across: r/immigration · r/legaladvice · r/Divorce · r/relationship_advice — NO link in reply #1. Add it only as a natural follow-up if the thread invites it.
+        </div>
+        <div id="reddit-replies" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openSearchForTopic('reddit')">🔍 Find Reddit threads →</button></div>
       </div>
+ 
+      <!-- QUORA OUTPUT -->
+      <div id="quora-section" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px;border-top:1px solid var(--border);padding-top:16px">
+          <span style="font-size:1.1rem">🔵</span>
+          <span style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);font-weight:700">Quora Answers</span>
+          <span style="font-size:.7rem;background:#fff8f8;color:#8b1c19;padding:2px 8px;border-radius:8px;font-weight:700">2 / DAY · RANKS ON GOOGLE FOR YEARS</span>
+        </div>
+        <div style="background:#fff8f8;border:1px solid #f5c6c6;border-radius:var(--r);padding:9px 12px;font-size:.77rem;color:#8b1c19;margin-bottom:10px;font-weight:600">
+          ✅ Always sign as: <strong>Ettrick Campbell, Esq. | EasyLegalFiling.com</strong> — credential multiplies trust and click-through.
+        </div>
+        <div id="quora-replies" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openSearchForTopic('quora')">🔍 Find Quora questions →</button></div>
+      </div>
+ 
+      <!-- TIKTOK OUTPUT -->
+      <div id="tiktok-section" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px;border-top:1px solid var(--border);padding-top:16px">
+          <span style="font-size:1.1rem">🎵</span>
+          <span style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);font-weight:700">TikTok Comments</span>
+          <span style="font-size:.7rem;background:#f0f0f0;color:#000;padding:2px 8px;border-radius:8px;font-weight:700">MAX 10 / DAY · 10K+ VIEW VIDEOS ONLY</span>
+        </div>
+        <div style="background:#f5f5f5;border:1px solid #ddd;border-radius:var(--r);padding:9px 12px;font-size:.77rem;color:#333;margin-bottom:10px;font-weight:600">
+          🔍 TikTok search terms: <span id="tiktok-search-terms" style="color:var(--purple);font-weight:700">generate first to see terms</span> — sort by Most Liked. Post on videos with 10k+ views only.
+        </div>
+        <div id="tiktok-replies" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openSearchForTopic('tiktok')">🔍 Open TikTok Search →</button></div>
+      </div>
+ 
+      <!-- TODAY CHECKLIST -->
+      <div id="daily-checklist" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
+        <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);margin-bottom:10px">📋 Today's Posting Checklist</div>
+        <div id="checklist-items" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+ 
     </div>
   </div>
  
-  <!-- THREAD HIJACKING -->
+    <!-- THREAD HIJACKING -->
   <div class="card">
     <div class="card-head"><div class="card-title">🔥 Thread Hijacking — 3–5x Your Traffic</div><div class="card-sub">Don't just answer new posts. Find active threads with 50+ comments and add to them. Reddit boosts engagement on active threads.</div></div>
     <div class="card-body">
@@ -1993,148 +2018,337 @@ window.addEventListener('scroll',()=>{
 },{passive:true});
 </script>
   <script>
+// ═══════════════════════════════════════
+//  EASY LEGAL FILING — COMMAND CENTER v4
+//  Powered by Claude API (Anthropic)
+//  All platforms: Reddit + Quora + TikTok
+// ═══════════════════════════════════════
+ 
 let selectedTopic = "immigration";
-let selectedPlatform = "reddit";
 let selectedIntent = "high";
-let selectedVariant = 0;
-
-// 🔑 PUT YOUR OPENAI API KEY HERE
-const OPENAI_API_KEY = "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";
-
+let postedToday = JSON.parse(localStorage.getItem('elf_posted_today') || '[]');
+ 
+// Topic → label map
+const topicLabels = {
+  immigration: "Immigration Court / Missed Hearing",
+  divorce: "NY Divorce",
+  will: "Will / Estate Planning",
+  prenup: "Prenup / Postnup",
+  poa: "Power of Attorney",
+  quiz: "General Legal Help"
+};
+ 
+// TikTok search terms per topic
+const tiktokTerms = {
+  immigration: '"immigration court" OR "missed court date" OR "deportation order" OR "DACA 2025"',
+  divorce: '"divorce new york" OR "divorce cost" OR "uncontested divorce" OR "how to file divorce"',
+  will: '"do I need a will" OR "estate planning" OR "what happens no will" OR "probate"',
+  prenup: '"do I need a prenup" OR "prenup worth it" OR "prenup before marriage"',
+  poa: '"power of attorney" OR "who controls my money if I cant" OR "financial protection"',
+  quiz: '"what legal documents do I need" OR "legal protection" OR "am I protected legally"'
+};
+ 
+// Search URLs per topic
+const searchUrls = {
+  immigration: {
+    reddit: 'https://www.reddit.com/r/immigration/search/?q=missed+court+date+help&sort=new',
+    quora: 'https://www.quora.com/search?q=missed+immigration+court+what+happens',
+    tiktok: 'https://www.tiktok.com/search?q=immigration+court+2025'
+  },
+  divorce: {
+    reddit: 'https://www.reddit.com/r/Divorce/search/?q=new+york+divorce+how+to+file&sort=new',
+    quora: 'https://www.quora.com/search?q=how+to+file+divorce+new+york+yourself',
+    tiktok: 'https://www.tiktok.com/search?q=divorce+new+york'
+  },
+  will: {
+    reddit: 'https://www.reddit.com/r/legaladvice/search/?q=no+will+died+new+york&sort=new',
+    quora: 'https://www.quora.com/search?q=what+happens+if+you+die+without+a+will',
+    tiktok: 'https://www.tiktok.com/search?q=do+I+need+a+will'
+  },
+  prenup: {
+    reddit: 'https://www.reddit.com/r/relationship_advice/search/?q=prenup+is+it+worth+it&sort=new',
+    quora: 'https://www.quora.com/search?q=should+I+get+a+prenup+no+assets',
+    tiktok: 'https://www.tiktok.com/search?q=prenup+before+marriage'
+  },
+  poa: {
+    reddit: 'https://www.reddit.com/r/legaladvice/search/?q=power+of+attorney+new+york+help&sort=new',
+    quora: 'https://www.quora.com/search?q=do+I+need+a+power+of+attorney',
+    tiktok: 'https://www.tiktok.com/search?q=power+of+attorney+explained'
+  },
+  quiz: {
+    reddit: 'https://www.reddit.com/r/personalfinance/search/?q=legal+documents+every+adult+needs&sort=new',
+    quora: 'https://www.quora.com/search?q=what+legal+documents+does+every+adult+need',
+    tiktok: 'https://www.tiktok.com/search?q=legal+documents+everyone+needs'
+  }
+};
+ 
 // SELECT TOPIC
 function selTopic(el) {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   selectedTopic = el.dataset.topic;
 }
-
-// SELECT PLATFORM
-function selPlat(platform) {
-  selectedPlatform = platform;
-  document.querySelectorAll('.pb').forEach(b => b.classList.remove('sel-reddit','sel-quora','sel-facebook','sel-tiktok'));
-  document.getElementById("pb-" + platform).classList.add("sel-" + platform);
-}
-
+ 
 // SELECT INTENT
 function selIntent(el, intent) {
   document.querySelectorAll('.intent-chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   selectedIntent = intent;
 }
-
-// SELECT VARIANT
-function selVariant(index) {
-  selectedVariant = index;
-  document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.var-btn')[index].classList.add('active');
+ 
+// SELECT VARIANT (kept for backward compat)
+function selVariant(index) {}
+function selPlat(p) {}
+function updatePlatTip() {}
+ 
+// OPEN SEARCH
+function openSearchForTopic(plat) {
+  const p = plat || 'reddit';
+  const url = searchUrls[selectedTopic]?.[p];
+  if (url) window.open(url, '_blank');
 }
-
-// 🔥 REAL AI GENERATION
-async function genReply() {
-  const topicMap = {
-    immigration: "immigration issue",
-    divorce: "divorce in New York",
-    will: "wills and estate",
-    prenup: "prenup agreement",
-    poa: "power of attorney",
-    quiz: "general legal issue"
-  };
-
-  const prompt = `
-You are a lawyer writing a helpful, high-converting response.
-
-Topic: ${topicMap[selectedTopic]}
-
-Instructions:
-- Answer like a real human lawyer
-- Use simple language
-- Add urgency if needed
-- No emojis
-- Do not sound robotic
-- No spam tone
-- Subtly mention EasyLegalFiling at the end
-- Max 180 words
-`;
-
+function openSearch() { openSearchForTopic('reddit'); }
+ 
+// ═══════════════════════════
+//  MAIN GENERATOR — Claude API
+// ═══════════════════════════
+async function genAllPlatforms() {
+  const btn = document.getElementById('gen-btn');
+  const loading = document.getElementById('gen-loading');
+  const errBox = document.getElementById('gen-error');
+ 
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating…';
+  loading.style.display = 'block';
+  errBox.style.display = 'none';
+ 
+  // Hide old results
+  ['reddit-section','quora-section','tiktok-section','daily-checklist'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+ 
+  const topicLabel = topicLabels[selectedTopic];
+  const today = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+ 
+  const prompt = `You are Ettrick Campbell, Esq., a New York attorney who runs EasyLegalFiling.com — a site where people can get attorney-designed legal documents (wills, divorce forms, power of attorney, prenups, immigration motions) for a fraction of lawyer fees.
+ 
+Today is ${today}. Topic: ${topicLabel}.
+ 
+Generate social media content for someone scrolling Reddit, Quora, and TikTok with a real legal problem RIGHT NOW. Your goal is to help them genuinely — the site mention should feel earned, not spammy.
+ 
+CRITICAL RULES:
+- Sound like a real helpful person who happens to be a lawyer — NOT like an ad
+- Vary sentence structure completely between replies — NO two replies should start the same way
+- Include EasyLegalFiling.com in only 2 of the 4 Reddit replies and 1 of the 2 Quora answers and 1 of the 3 TikTok comments — let the rest be pure value
+- Reddit replies: conversational, no formal headers, 80–160 words, mix of short punchy and longer analytical
+- Quora answers: structured and credible, 200–300 words, sign with "— Ettrick Campbell, Esq." at end (only add EasyLegalFiling.com if that answer includes the link)
+- TikTok comments: 1–3 sentences MAX, hook-driven, sounds like someone who knows more than they're letting on — curiosity gap style. Occasional use of line breaks for rhythm.
+- Do NOT use "I've seen" more than once across all content
+- Do NOT use the phrase "don't panic"
+- Use specific legal facts, deadlines, or NY law details when relevant — this is what gets upvotes
+- For the 2 replies that mention EasyLegalFiling.com, weave it in naturally — never as the first or last sentence of a reply
+ 
+Return ONLY a JSON object exactly like this (no markdown, no backticks, no explanation):
+{
+  "tiktok_search_terms": "3–4 TikTok search terms for this topic, comma separated",
+  "reddit": [
+    {"angle": "Short angle label", "text": "full reply text", "has_link": true|false},
+    {"angle": "Short angle label", "text": "full reply text", "has_link": true|false},
+    {"angle": "Short angle label", "text": "full reply text", "has_link": false},
+    {"angle": "Short angle label", "text": "full reply text", "has_link": false}
+  ],
+  "quora": [
+    {"angle": "Short angle label", "text": "full answer text", "has_link": true|false},
+    {"angle": "Short angle label", "text": "full answer text", "has_link": false}
+  ],
+  "tiktok": [
+    {"angle": "Short angle label", "text": "comment text", "has_link": true|false},
+    {"angle": "Short angle label", "text": "comment text", "has_link": false},
+    {"angle": "Short angle label", "text": "comment text", "has_link": false}
+  ],
+  "checklist": [
+    "Post Reddit reply 1 in r/immigration (or relevant subreddit)",
+    "Post Reddit reply 2 in r/legaladvice",
+    "Post Reddit reply 3 in r/Divorce or r/relationship_advice",
+    "Post Reddit reply 4 in r/personalfinance or r/NYClife",
+    "Post Quora answer 1",
+    "Post Quora answer 2",
+    "Post 3 TikTok comments on 10k+ view videos"
+  ]
+}`;
+ 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: {
-        "Authorization": "Bearer " + OPENAI_API_KEY,
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "gpt-5.3",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 3000,
+        messages: [{ role: "user", content: prompt }]
       })
     });
-
+ 
     const data = await res.json();
-
-    if (!data.choices || !data.choices.length) {
-      alert("Error: " + JSON.stringify(data));
-      return;
+ 
+    if (!data.content || !data.content.length) {
+      throw new Error(JSON.stringify(data));
     }
-
-    const reply = data.choices[0].message.content;
-
-    document.getElementById("reply-text").innerText = reply;
-    document.getElementById("reply-box").style.display = "block";
-
-  } catch (err) {
-    alert("Error: " + err.message);
+ 
+    const raw = data.content.map(b => b.text || '').join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+ 
+    renderResults(parsed);
+ 
+  } catch(err) {
+    errBox.textContent = '⚠️ Generation failed: ' + err.message + ' — Try again in a moment.';
+    errBox.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✨ Generate All Platforms for Today';
+    loading.style.display = 'none';
   }
 }
-
-// 🔍 OPEN SEARCH PAGE
-function openSearch() {
-  let query = "";
-
-  if (selectedTopic === "immigration") query = "missed immigration court help";
-  if (selectedTopic === "divorce") query = "divorce cost new york";
-  if (selectedTopic === "will") query = "what happens if no will";
-  if (selectedTopic === "prenup") query = "do I need prenup";
-  if (selectedTopic === "poa") query = "power of attorney help";
-  if (selectedTopic === "quiz") query = "legal help what should I do";
-
-  let url = "";
-
-  if (selectedPlatform === "reddit") {
-    url = "https://www.reddit.com/search/?q=" + encodeURIComponent(query) + "&sort=new";
+ 
+// ═══════════════════
+//  RENDER RESULTS
+// ═══════════════════
+function renderResults(data) {
+  // TikTok search terms
+  if (data.tiktok_search_terms) {
+    document.getElementById('tiktok-search-terms').textContent = data.tiktok_search_terms;
   }
-  if (selectedPlatform === "quora") {
-    url = "https://www.quora.com/search?q=" + encodeURIComponent(query);
+ 
+  // Reddit
+  if (data.reddit && data.reddit.length) {
+    renderPlatformReplies('reddit-replies', data.reddit, 'reddit');
+    document.getElementById('reddit-section').style.display = 'block';
   }
-  if (selectedPlatform === "facebook") {
-    url = "https://www.facebook.com/search/top?q=" + encodeURIComponent(query);
+ 
+  // Quora
+  if (data.quora && data.quora.length) {
+    renderPlatformReplies('quora-replies', data.quora, 'quora');
+    document.getElementById('quora-section').style.display = 'block';
   }
-  if (selectedPlatform === "tiktok") {
-    url = "https://www.tiktok.com/search?q=" + encodeURIComponent(query);
+ 
+  // TikTok
+  if (data.tiktok && data.tiktok.length) {
+    renderPlatformReplies('tiktok-replies', data.tiktok, 'tiktok');
+    document.getElementById('tiktok-section').style.display = 'block';
   }
-
-  window.open(url, "_blank");
+ 
+  // Checklist
+  if (data.checklist && data.checklist.length) {
+    const el = document.getElementById('checklist-items');
+    el.innerHTML = data.checklist.map((item, i) => `
+      <div style="display:flex;align-items:flex-start;gap:10px;background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-lg);padding:10px 14px;cursor:pointer" onclick="toggleCheck(this)" id="chk-${i}">
+        <div style="width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800" class="chk-box"></div>
+        <span style="font-size:.82rem;color:var(--ink);line-height:1.5">${item}</span>
+      </div>`).join('');
+    document.getElementById('daily-checklist').style.display = 'block';
+  }
+ 
+  // Smooth scroll
+  document.getElementById('reddit-section').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
-// COPY REPLY
+ 
+function toggleCheck(el) {
+  const box = el.querySelector('.chk-box');
+  const isChecked = box.style.background === 'var(--purple)';
+  if (isChecked) {
+    box.style.background = '';
+    box.style.borderColor = 'var(--border)';
+    box.textContent = '';
+    el.style.opacity = '1';
+  } else {
+    box.style.background = 'var(--purple)';
+    box.style.borderColor = 'var(--purple)';
+    box.textContent = '✓';
+    box.style.color = '#fff';
+    el.style.opacity = '0.45';
+  }
+}
+ 
+function renderPlatformReplies(containerId, replies, platform) {
+  const colors = {
+    reddit: {bg:'#fff8f6',border:'#ffd0b8',label:'#cc3700',accent:'var(--orange)'},
+    quora: {bg:'#fff8f8',border:'#f5c6c6',label:'#8b1c19',accent:'#b92b27'},
+    tiktok: {bg:'#f7f7f7',border:'#ddd',label:'#000',accent:'#000'}
+  };
+  const c = colors[platform] || colors.reddit;
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+ 
+  replies.forEach((reply, i) => {
+    const linkBadge = reply.has_link
+      ? `<span style="font-size:.65rem;background:#e6f9ee;color:var(--green);border:1px solid #86efac;padding:1px 7px;border-radius:7px;font-weight:700;margin-left:6px">🔗 includes link</span>`
+      : `<span style="font-size:.65rem;background:var(--paper2);color:var(--muted);border:1px solid var(--border);padding:1px 7px;border-radius:7px;font-weight:700;margin-left:6px">no link — pure value</span>`;
+ 
+    const div = document.createElement('div');
+    div.style.cssText = `background:${c.bg};border:1.5px solid ${c.border};border-radius:12px;overflow:hidden`;
+    div.innerHTML = `
+      <div style="padding:10px 14px;border-bottom:1px solid ${c.border};display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:${c.label}">${platform} ${i+1}</span>
+          <span style="font-size:.75rem;font-weight:600;color:var(--muted)">— ${reply.angle}</span>
+          ${linkBadge}
+        </div>
+        <button onclick="copyText(this, \`${escapeBacktick(reply.text)}\`)" style="font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:8px;border:1.5px solid ${c.border};background:#fff;cursor:pointer;color:${c.label};transition:all .13s" onmouseover="this.style.background='${c.bg}'" onmouseout="this.style.background='#fff'">📋 Copy</button>
+      </div>
+      <div style="padding:12px 14px;font-size:.83rem;color:var(--ink2);line-height:1.75;white-space:pre-wrap;font-family:'DM Sans',sans-serif">${escapeHtml(reply.text)}</div>
+      <div style="padding:6px 14px 10px;display:flex;gap:6px;align-items:center">
+        <button onclick="markDone(this)" style="font-size:.71rem;font-weight:700;padding:3px 10px;border-radius:7px;border:1.5px solid var(--border);background:#fff;cursor:pointer;color:var(--muted)">✅ Posted</button>
+        <span style="font-size:.7rem;color:var(--muted2)">Mark when you've posted this one</span>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+ 
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escapeBacktick(str) {
+  return str.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');
+}
+ 
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '#fff';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
+ 
+function markDone(btn) {
+  const card = btn.closest('div[style*="border-radius:12px"]');
+  if (card) {
+    card.style.opacity = '0.4';
+    card.style.textDecoration = 'line-through';
+  }
+  btn.textContent = '✓ Done';
+  btn.style.color = 'var(--green)';
+}
+ 
+// Legacy copy functions used elsewhere in the file
 function copyReply() {
-  const text = document.getElementById("reply-text").innerText;
-  navigator.clipboard.writeText(text);
-
-  const msg = document.getElementById("copied-msg");
-  msg.classList.add("show");
-
-  setTimeout(() => {
-    msg.classList.remove("show");
-  }, 2000);
+  const text = document.getElementById('reply-text')?.innerText;
+  if (text) {
+    navigator.clipboard.writeText(text);
+    const m = document.getElementById('copied-msg');
+    if(m){ m.classList.add('show'); setTimeout(()=>m.classList.remove('show'),2500); }
+  }
 }
-
-// MARK POSTED
-function markPosted() {
-  selectedVariant = (selectedVariant + 1) % 3;
-  selVariant(selectedVariant);
-  alert("Next reply ready.");
-}
+function markPosted() {}
+function genReply() { genAllPlatforms(); }
+ 
 </script>
 </body>
 </html>
