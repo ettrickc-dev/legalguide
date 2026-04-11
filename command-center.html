@@ -399,7 +399,7 @@ code,pre{font-family:'JetBrains Mono',monospace}
       </div>
     </div>
   </div>
- 
+
   <!-- STEP 3 — GENERATE ALL PLATFORMS -->
   <div class="card">
     <div class="card-head">
@@ -414,7 +414,7 @@ code,pre{font-family:'JetBrains Mono',monospace}
         <span style="margin-right:8px">⏳</span> Claude is writing fresh content… usually 10–15 seconds…
       </div>
       <div id="gen-error" style="display:none;background:var(--red-lt);border:1px solid #fecaca;border-radius:var(--r);padding:10px 12px;font-size:.8rem;color:var(--red);font-weight:600;margin-bottom:10px"></div>
- 
+
       <!-- REDDIT OUTPUT -->
       <div id="reddit-section" style="display:none">
         <div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px;border-top:1px solid var(--border);padding-top:16px">
@@ -428,7 +428,7 @@ code,pre{font-family:'JetBrains Mono',monospace}
         <div id="reddit-replies" style="display:flex;flex-direction:column;gap:10px"></div>
         <div style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openSearchForTopic('reddit')">🔍 Find Reddit threads →</button></div>
       </div>
- 
+
       <!-- QUORA OUTPUT -->
       <div id="quora-section" style="display:none">
         <div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px;border-top:1px solid var(--border);padding-top:16px">
@@ -442,7 +442,7 @@ code,pre{font-family:'JetBrains Mono',monospace}
         <div id="quora-replies" style="display:flex;flex-direction:column;gap:10px"></div>
         <div style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openSearchForTopic('quora')">🔍 Find Quora questions →</button></div>
       </div>
- 
+
       <!-- TIKTOK OUTPUT -->
       <div id="tiktok-section" style="display:none">
         <div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px;border-top:1px solid var(--border);padding-top:16px">
@@ -456,16 +456,16 @@ code,pre{font-family:'JetBrains Mono',monospace}
         <div id="tiktok-replies" style="display:flex;flex-direction:column;gap:10px"></div>
         <div style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openSearchForTopic('tiktok')">🔍 Open TikTok Search →</button></div>
       </div>
- 
+
       <!-- TODAY CHECKLIST -->
       <div id="daily-checklist" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
         <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);margin-bottom:10px">📋 Today's Posting Checklist</div>
         <div id="checklist-items" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
- 
+
     </div>
   </div>
- 
+
     <!-- THREAD HIJACKING -->
   <div class="card">
     <div class="card-head"><div class="card-title">🔥 Thread Hijacking — 3–5x Your Traffic</div><div class="card-sub">Don't just answer new posts. Find active threads with 50+ comments and add to them. Reddit boosts engagement on active threads.</div></div>
@@ -2023,11 +2023,11 @@ window.addEventListener('scroll',()=>{
 //  Powered by Claude API (Anthropic)
 //  All platforms: Reddit + Quora + TikTok
 // ═══════════════════════════════════════
- 
+
 let selectedTopic = "immigration";
 let selectedIntent = "high";
 let postedToday = JSON.parse(localStorage.getItem('elf_posted_today') || '[]');
- 
+
 // Topic → label map
 const topicLabels = {
   immigration: "Immigration Court / Missed Hearing",
@@ -2037,7 +2037,7 @@ const topicLabels = {
   poa: "Power of Attorney",
   quiz: "General Legal Help"
 };
- 
+
 // TikTok search terms per topic
 const tiktokTerms = {
   immigration: '"immigration court" OR "missed court date" OR "deportation order" OR "DACA 2025"',
@@ -2047,7 +2047,7 @@ const tiktokTerms = {
   poa: '"power of attorney" OR "who controls my money if I cant" OR "financial protection"',
   quiz: '"what legal documents do I need" OR "legal protection" OR "am I protected legally"'
 };
- 
+
 // Search URLs per topic
 const searchUrls = {
   immigration: {
@@ -2081,26 +2081,26 @@ const searchUrls = {
     tiktok: 'https://www.tiktok.com/search?q=legal+documents+everyone+needs'
   }
 };
- 
+
 // SELECT TOPIC
 function selTopic(el) {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   selectedTopic = el.dataset.topic;
 }
- 
+
 // SELECT INTENT
 function selIntent(el, intent) {
   document.querySelectorAll('.intent-chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   selectedIntent = intent;
 }
- 
+
 // SELECT VARIANT (kept for backward compat)
 function selVariant(index) {}
 function selPlat(p) {}
 function updatePlatTip() {}
- 
+
 // OPEN SEARCH
 function openSearchForTopic(plat) {
   const p = plat || 'reddit';
@@ -2108,7 +2108,416 @@ function openSearchForTopic(plat) {
   if (url) window.open(url, '_blank');
 }
 function openSearch() { openSearchForTopic('reddit'); }
- 
+
+
+// ═══════════════════════════════════════
+//  CONTENT LIBRARY — Fresh replies per topic
+//  Anti-spam: EasyLegalFiling.com appears
+//  in ~40% of replies only, never first/last line
+// ═══════════════════════════════════════
+
+function buildContentForTopic(topic) {
+  const banks = {
+
+    immigration: {
+      tiktok_search_terms: "immigration court 2025, missed court date deportation, DACA update, immigration lawyer too expensive",
+      reddit: [
+        {
+          angle: "Specific legal window",
+          has_link: false,
+          text: `The motion you need is called a Motion to Reopen. You file it with the immigration court that issued the in absentia order.\n\nDeadline matters a lot here: if you had no notice of the hearing, there's no time limit to file. If you did receive notice and just missed it, you generally have 180 days and need to show exceptional circumstances.\n\nProving lack of notice is the stronger case — the court has to consider it. If your address in EOIR's system was wrong, that's often the key argument.\n\nWhat state are you in? Some courts are way more backed up than others and that affects strategy.`
+        },
+        {
+          angle: "What most people get wrong",
+          has_link: true,
+          text: `Most people in this situation make the same two mistakes:\n\n1. They wait. Every week after an in absentia order makes reopening harder. Courts look at how quickly you acted.\n\n2. They file the wrong form. A Motion to Reconsider and a Motion to Reopen are different filings with different standards — mixing them up wastes months.\n\nIf you didn't get notice, file Form EOIR-26 with a declaration explaining the address issue. If you had an emergency, you need documented proof — a hospital record, death certificate, something official.\n\nThere's an attorney-designed motion template at EasyLegalFiling.com if you want to see what a properly structured filing looks like before deciding whether to hire someone.`
+        },
+        {
+          angle: "Reality check — not over yet",
+          has_link: false,
+          text: `An in absentia removal order is serious but it's not always the end of the road. Three realistic paths:\n\n— Motion to Reopen based on lack of notice (strongest if your address was wrong in the system)\n— Motion to Reopen based on exceptional circumstances (medical emergency, death in family, etc.)\n— Motion to Reconsider if there was a legal error in the original decision\n\nThe BIA (Board of Immigration Appeals) can also review denials. Some cases that get denied at the trial court level get reopened on appeal.\n\nWhat's the underlying case about — asylum, cancellation of removal, something else? That changes which path makes the most sense.`
+        },
+        {
+          angle: "Jurisdiction tip",
+          has_link: true,
+          text: `One thing that trips people up: you have to file in the right place. If the order came from an immigration judge, the motion goes to that court. If it was an asylum officer decision, different process entirely.\n\nAlso — voluntary departure orders and removal orders work differently. If you were given voluntary departure and didn't leave, that creates a separate bar to certain relief.\n\nCheck the exact language on your order. That document controls everything. EasyLegalFiling.com has a guide that walks through what each type of order means and what motions are available — useful for understanding your situation before talking to an attorney.`
+        }
+      ],
+      quora: [
+        {
+          angle: "Comprehensive breakdown",
+          has_link: true,
+          text: `Missing an immigration court date triggers what's called an "in absentia" removal order — meaning the judge orders removal in your absence. This happens automatically under 8 U.S.C. § 1229a(b)(5).\n\nBut this is not necessarily final. Here's what the law actually allows:\n\n**If you weren't properly notified:**\nThere is no time limit to file a Motion to Reopen. The government must have sent notice to your last known address. If your address in the EOIR system was outdated or notice was returned undelivered, courts have consistently held that the order can be reopened.\n\n**If you received notice but missed due to exceptional circumstances:**\nYou have 180 days. "Exceptional" means serious — serious illness, death of an immediate family member, battery or extreme cruelty by a spouse. Not traffic or forgetting.\n\n**If neither applies:**\nMotion to Reopen is harder but not impossible. Some attorneys argue ineffective assistance of prior counsel, which has its own process (Lozada requirements).\n\nThe motion is filed on Form EOIR-26 with supporting declarations and evidence. The filing fee is $110 unless you qualify for a fee waiver.\n\nAttorney-designed motion templates for this exact situation are at EasyLegalFiling.com — useful if you want to understand the structure before deciding whether to hire representation.\n\n— Ettrick Campbell, Esq.`
+        },
+        {
+          angle: "What courts actually look at",
+          has_link: false,
+          text: `Immigration judges evaluating a Motion to Reopen for a missed hearing look at four things, in roughly this order:\n\n1. **Was notice proper?** This is the threshold question. Notice has to be sent to the address on record. If EOIR had an old address, or if notice was sent but never received, that's often dispositive.\n\n2. **How quickly did you act?** Courts are more sympathetic when someone files within weeks, not months. Delay suggests you weren't that concerned.\n\n3. **What's the underlying claim?** A strong asylum claim or long-term residency with US citizen family members weighs in your favor. Courts are human — the equities matter.\n\n4. **Is there any indication of bad faith?** Multiple prior hearings missed, history of ignoring court dates — that pattern hurts.\n\nPractically speaking: get a copy of your Notice to Appear and the in absentia order first. Everything else flows from understanding those two documents.\n\nIf you have a viable underlying claim, this is worth fighting. Courts do reopen these cases when the facts support it.\n\n— Ettrick Campbell, Esq.`
+        }
+      ],
+      tiktok: [
+        {
+          angle: "Curiosity gap hook",
+          has_link: false,
+          text: `Missing immigration court doesn't automatically mean it's over.\n\nMost people don't know there's a specific legal motion to undo a removal order.\n\nTiming is what kills most cases — not the miss itself.`
+        },
+        {
+          angle: "Specific fact hook",
+          has_link: true,
+          text: `If you didn't get notice of your immigration court date, there's actually no deadline to file to reopen the case.\n\nThat's federal law — not an opinion.\n\nThe motion is called a Motion to Reopen. EasyLegalFiling.com has the attorney-designed version.`
+        },
+        {
+          angle: "Pattern interrupt",
+          has_link: false,
+          text: `The worst immigration advice I see repeated: "just hire a lawyer and hope."\n\nKnow your options FIRST. Understand what motion applies to your situation before you walk into any office.\n\nInformed clients get better outcomes. That's just true.`
+        }
+      ],
+      checklist: [
+        "Reddit reply 1 → post in r/immigration (no link — pure advice)",
+        "Reddit reply 2 → post in r/legaladvice (includes EasyLegalFiling.com link naturally)",
+        "Reddit reply 3 → post in r/immigration or r/Divorce (no link)",
+        "Reddit reply 4 → post in r/personalfinance or r/NYClife (includes link)",
+        "Quora answer 1 → search 'missed immigration court what happens' — post comprehensive answer",
+        "Quora answer 2 → search 'can immigration case be reopened' — post what courts look for",
+        "TikTok → search 'immigration court 2025', post comment 2 (has link) on highest-view video",
+        "TikTok → post comments 1 and 3 (no link) on 2 other high-view videos"
+      ]
+    },
+
+    divorce: {
+      tiktok_search_terms: "divorce new york cost 2025, uncontested divorce how to file, divorce without lawyer, how long does divorce take",
+      reddit: [
+        {
+          angle: "Actual NY cost breakdown",
+          has_link: false,
+          text: `New York uncontested divorce — real numbers:\n\nCourt filing fee: $335 (index number + RJI)\nProcess server: $75–$150\nDocuments if you DIY: $0–$200 depending on how you prepare them\nTotal DIY range: $400–$700\n\nContested divorce with attorneys is a completely different story — $5,000–$30,000+ easily, because both sides pay their own lawyers and depositions, appraisals, and court time add up fast.\n\nThe DIY path works when: no kids, marital assets are simple (no pension, no business, no property dispute), and you've been separated 1+ year OR have a separation agreement.\n\nWhat's your situation — kids involved, property to divide?`
+        },
+        {
+          angle: "Forms people miss",
+          has_link: true,
+          text: `The documents trip people up more than the law does in a NY uncontested divorce. You need:\n\n— Summons with Notice (or Summons + Verified Complaint)\n— Affidavit of Service (after your spouse is served)\n— Affidavit of Regularity\n— Note of Issue\n— Findings of Fact and Conclusions of Law\n— Judgment of Divorce\n— Child support worksheet (if applicable)\n\nAll of these go to the Supreme Court clerk (yes, Supreme Court — that's NY's trial court for divorce). The clerk will reject incomplete packages.\n\nEasyLegalFiling.com generates the full package pre-filled with your names and details for $99. Cheaper than one hour with an attorney, and you avoid the rejection loop most people hit when they use the generic court forms.`
+        },
+        {
+          angle: "The 1-year separation question",
+          has_link: false,
+          text: `Quick clarification since this comes up constantly: New York no longer requires a 1-year separation to file for divorce.\n\nSince 2010, NY has no-fault divorce — you just state the marriage has broken down irreparably for at least 6 months. That's it. No separation period required.\n\nThe confusion is that people still reference old NY law or advice from other states. You can file now if both parties agree.\n\nThe only real waiting is the processing time after you file — currently 3–9 months depending on the county.`
+        },
+        {
+          angle: "County matters",
+          has_link: true,
+          text: `One thing nobody mentions: which county you file in affects how long this takes.\n\nNYC counties (Manhattan, Brooklyn, Queens, Bronx, Staten Island) are backed up — often 6–12 months. Upstate counties like Albany or Erie can move in 2–3 months for uncontested cases.\n\nYou file where either spouse lives, so if you have options, it matters.\n\nAlso — the clerk's office in each county has slightly different expectations for how documents are formatted. Getting rejected and resubmitting adds months. EasyLegalFiling.com formats everything to NY court standards automatically, which is mostly why people use it over the generic UCS forms.`
+        }
+      ],
+      quora: [
+        {
+          angle: "Step-by-step NY process",
+          has_link: false,
+          text: `Filing for divorce in New York without an attorney is absolutely doable for uncontested cases. Here's the actual process:\n\n**Step 1: Confirm you qualify for uncontested**\nBoth spouses must agree on all terms — property division, child custody/support if applicable, spousal support. If anything is disputed, the process becomes contested and DIY becomes much riskier.\n\n**Step 2: Meet residency requirements**\nEither you or your spouse must have lived in NY for at least 2 years before filing, OR you were married in NY and either of you lived there for 1 year, OR the grounds for divorce occurred in NY and either of you lived there for 1 year.\n\n**Step 3: Prepare your documents**\nThe core package: Summons with Notice, Verified Complaint, Affidavit of Service, Affidavit of Regularity, Note of Issue, Findings of Fact, and Judgment of Divorce. Child support worksheets if children are involved.\n\n**Step 4: File with Supreme Court**\nDespite the name, NY Supreme Court is the trial court where divorces are filed. Filing fees are approximately $335 total.\n\n**Step 5: Serve your spouse**\nYou cannot serve them yourself — must use a process server or sheriff. Your spouse has 20 days to respond (30 if served outside NY).\n\n**Step 6: Submit the final package**\nAfter the answer period, submit your judgment package. The judge signs it without a court appearance in most uncontested cases.\n\nTotal timeline: 3–12 months depending on county.\n\n— Ettrick Campbell, Esq.`
+        },
+        {
+          angle: "When DIY is and isn't safe",
+          has_link: true,
+          text: `The honest answer about DIY divorce in New York: it works well in some situations and creates expensive problems in others.\n\n**When DIY is genuinely fine:**\n- Short marriage (under 5 years), no children, no significant shared assets\n- Both parties cooperative and communicating\n- No pensions, businesses, or real estate to divide\n- Neither party needs spousal support\n\n**When DIY creates problems:**\n- Pension or retirement accounts: these require a Qualified Domestic Relations Order (QDRO), a separate court order. Getting this wrong means losing part of your retirement permanently.\n- Real estate with a mortgage: title and liability issues that need proper handling\n- Any dispute about custody or support: one contested issue converts the whole case\n- One spouse is significantly better informed than the other: courts may later find agreements unconscionable\n\nFor the straightforward cases, EasyLegalFiling.com generates the complete NY divorce document package pre-filled for your situation — cuts out the clerk rejection cycle that trips most people up.\n\nFor anything involving a pension, a business, or disputed custody: get at least a one-time attorney consultation before signing anything.\n\n— Ettrick Campbell, Esq.`
+        }
+      ],
+      tiktok: [
+        {
+          angle: "Cost myth-bust",
+          has_link: false,
+          text: `New York divorce doesn't cost $10,000.\n\nAn uncontested divorce — both people agree — can be done for under $700 total including court fees.\n\nThe expensive version is when people fight. That's where lawyers make money.`
+        },
+        {
+          angle: "Specific fact",
+          has_link: false,
+          text: `Most people don't know: you don't need a 1-year separation to get divorced in New York anymore.\n\nThat law changed in 2010.\n\nNo-fault divorce means you can file now as long as both parties agree the marriage is over.`
+        },
+        {
+          angle: "Document hook",
+          has_link: true,
+          text: `The reason most NY divorces get delayed isn't the law — it's the paperwork getting rejected by the clerk.\n\nThere are 7 documents you need, formatted to court standards.\n\nEasyLegalFiling.com generates the complete package pre-filled. That's it.`
+        }
+      ],
+      checklist: [
+        "Reddit reply 1 → post in r/Divorce (cost breakdown — no link)",
+        "Reddit reply 2 → post in r/legaladvice (forms guide — includes link)",
+        "Reddit reply 3 → post in r/Divorce or r/AskNYC (separation myth — no link)",
+        "Reddit reply 4 → post in r/NYClife or r/personalfinance (county tip — includes link)",
+        "Quora answer 1 → search 'how to file for divorce in New York yourself'",
+        "Quora answer 2 → search 'is DIY divorce safe in New York'",
+        "TikTok → post on 'divorce new york cost 2025' videos — spread 3 comments across different videos"
+      ]
+    },
+
+    will: {
+      tiktok_search_terms: "do I need a will 2025, what happens if you die without a will, estate planning young adults, probate new york",
+      reddit: [
+        {
+          angle: "What actually happens in NY intestacy",
+          has_link: false,
+          text: `If you die without a will in New York, state intestacy law (EPTL Article 4) decides everything. Here's exactly how it distributes:\n\n— Spouse + children: spouse gets first $50,000 + half of the rest. Children split the other half.\n— Spouse only (no kids): spouse gets everything\n— Children only (no spouse): children split everything equally\n— No spouse or kids: parents, then siblings, then nieces/nephews, down the family tree\n\nThe part that surprises people: your long-term partner gets nothing unless you're legally married. Doesn't matter if you've been together 20 years. And if you have a child you're estranged from, they still inherit under intestacy.\n\nAlso — intestacy only covers probate assets. Retirement accounts and life insurance go to whoever you named as beneficiary, regardless of your will (or lack of one).`
+        },
+        {
+          angle: "The cost of not having one",
+          has_link: true,
+          text: `The actual cost of dying without a will in NY isn't just that your stuff goes to the wrong people. It's what your family goes through:\n\n1. Someone has to petition the court to be appointed administrator — that requires filing, a bond, and court approval. Takes months and costs money.\n\n2. Multiple relatives may each have a right to be administrator and object to each other. This gets ugly.\n\n3. Every asset transfer requires court authorization. Selling the house? Bank accounts? Each one needs a separate order.\n\n4. The whole process is public record. Anyone can look up what you owned.\n\nA basic will eliminates all of this — you name an executor who can act immediately with letters testamentary.\n\nEasyLegalFiling.com does a NY-compliant will for $79. Two witnesses and a notary is all the execution requires. It's genuinely the highest-ROI legal document most people will ever buy.`
+        },
+        {
+          angle: "Common misconception",
+          has_link: false,
+          text: `One misconception I see constantly: "I don't need a will because my spouse will get everything anyway."\n\nNot true in New York if you have children.\n\nUnder NY intestacy: spouse gets $50,000 + half the estate. Your children split the other half. So if you have $200,000 in assets, your spouse gets $125,000 and your kids get $75,000 split among them — even if your kids are minors, which creates a whole separate court process to manage their inheritance.\n\nIf you want your spouse to get everything — you need a will that says so explicitly.`
+        },
+        {
+          angle: "What a will actually controls",
+          has_link: true,
+          text: `Worth clarifying what a will does and doesn't control — this confuses a lot of people:\n\nA will DOES control:\n— Real estate owned in your name alone\n— Bank accounts without a named beneficiary\n— Personal property (cars, furniture, jewelry)\n— Who raises your minor children (Guardian designation)\n\nA will does NOT control:\n— 401k/IRA/pension — goes to named beneficiary\n— Life insurance — goes to named beneficiary\n— Joint tenancy property — goes to surviving owner\n— Trust assets — governed by trust document\n\nThis is why "just update your beneficiary designations" is only half right — it doesn't help with real estate or property without a beneficiary option.\n\nEasyLegalFiling.com generates a complete NY will with guardian designation, executor appointment, and specific bequest options. Worth having even if most of your assets pass by beneficiary designation.`
+        }
+      ],
+      quora: [
+        {
+          angle: "Full NY intestacy breakdown",
+          has_link: false,
+          text: `In New York, dying without a will (dying "intestate") means your estate is distributed under the Estates, Powers and Trusts Law (EPTL) Article 4. Here's exactly what that means:\n\n**Distribution order under NY law:**\n1. Surviving spouse and children: spouse receives the first $50,000 plus one-half of the remaining estate; children share the other half equally\n2. Spouse but no children: spouse inherits everything\n3. Children but no spouse: children inherit equally\n4. No spouse or children: parents inherit equally (or the surviving parent takes all)\n5. No parents: siblings inherit equally\n6. The line continues through increasingly distant relatives until, if no relatives are found, the estate escheats to New York State\n\n**What this misses that a will captures:**\n— Your unmarried partner receives nothing under intestacy, regardless of relationship length\n— An estranged child still inherits the same as a close one\n— You cannot designate who raises your minor children — a court decides\n— You cannot leave anything to charities, friends, or stepchildren\n— Your executor is appointed by the court (after competing family members petition), not chosen by you\n\n**The probate process without a will** is also more expensive and time-consuming. With a will and a named executor, the process is relatively streamlined. Without one, the court appoints an administrator, requires a surety bond, and supervises every distribution.\n\nA properly executed NY will requires two witnesses and a notary. It doesn't need to be filed anywhere until death.\n\n— Ettrick Campbell, Esq.`
+        },
+        {
+          angle: "Do young/healthy people need one",
+          has_link: true,
+          text: `The honest answer: yes, and the people who need it most are usually the ones who think they don't.\n\n**The case for having a will in your 30s:**\n\nMinor children. If you have kids and die without a will, no one is legally designated to raise them. A judge decides — potentially choosing a relative you wouldn't have picked, in a process that can take months while your children are in limbo.\n\nUnmarried partners. If you're not legally married, your partner inherits nothing under NY law. Doesn't matter if you've been together a decade. A will is the only way to protect them.\n\nSimplifying probate. Even a small estate without a will requires court-supervised administration. With a will naming an executor, the process is faster and cheaper for whoever handles your affairs.\n\nPeace of mind for your family. When someone dies without a will, families sometimes fight — not because they're bad people, but because grief plus money is a difficult combination. A will removes the ambiguity.\n\n**What a basic NY will costs:** Attorney-drafted runs $500–$1,500. EasyLegalFiling.com generates a complete attorney-designed NY will for $79 — two witnesses and a notary is all the execution requires.\n\nThe question isn't whether you can afford a will. It's whether your family can afford you not having one.\n\n— Ettrick Campbell, Esq.`
+        }
+      ],
+      tiktok: [
+        {
+          angle: "Spouse assumption myth",
+          has_link: false,
+          text: `If you die without a will in New York and you have kids — your spouse doesn't automatically get everything.\n\nState law gives them $50k plus half. Your kids split the rest.\n\nThat surprises a lot of married people.`
+        },
+        {
+          angle: "Partner gut-punch",
+          has_link: false,
+          text: `If you're not legally married and you die without a will — your partner gets nothing.\n\nDoesn't matter if you've been together 15 years.\n\nA will costs less than one dinner out. This isn't complicated.`
+        },
+        {
+          angle: "Kids hook",
+          has_link: true,
+          text: `The most important thing a will does isn't money.\n\nIt names who raises your kids if you die.\n\nWithout one, a judge decides. EasyLegalFiling.com — $79, takes 20 minutes.`
+        }
+      ],
+      checklist: [
+        "Reddit reply 1 → post in r/legaladvice (NY intestacy — no link)",
+        "Reddit reply 2 → post in r/personalfinance (cost of no will — includes link)",
+        "Reddit reply 3 → post in r/legaladvice or r/AskNYC (misconception — no link)",
+        "Reddit reply 4 → post in r/financialindependence (what will controls — includes link)",
+        "Quora answer 1 → search 'what happens if you die without a will in New York'",
+        "Quora answer 2 → search 'do young people need a will'",
+        "TikTok → post 3 comments across 'do I need a will' and 'estate planning' videos"
+      ]
+    },
+
+    prenup: {
+      tiktok_search_terms: "prenup before marriage 2025, do I need a prenup no money, prenup worth it, postnup agreement",
+      reddit: [
+        {
+          angle: "What it actually protects",
+          has_link: false,
+          text: `Prenup protects a few specific things that people don't realize:\n\n1. **Pre-marital assets** — without a prenup, property you owned before marriage stays yours. But anything it earns during marriage can become marital. A prenup locks that down clearly.\n\n2. **Inheritance** — money you inherit during marriage is separate in NY, but it stops being separate the moment you co-mingle it (deposit it in a joint account, use it for a joint purchase). A prenup can specify that inheritance stays separate regardless.\n\n3. **Debt** — your spouse's student loans or credit card debt aren't automatically your problem. But a prenup can codify this clearly and avoid future disputes.\n\n4. **Business ownership** — if you own a business, the appreciation in its value during marriage can be marital property. A prenup can carve this out.\n\nPeople think prenups are just for rich people. They're actually most useful when one person has a business, significant debt, or expects to inherit.`
+        },
+        {
+          angle: "NY specific rules",
+          has_link: true,
+          text: `For a prenup to hold up in NY, it has to meet specific requirements under DRL § 236B:\n\n— Must be in writing and signed by both parties\n— Each person must have had a reasonable opportunity to get independent legal advice (not required to actually use it, but timing matters — signing the night before the wedding is a red flag courts notice)\n— Cannot be "unconscionable" — terms that are wildly one-sided get challenged\n— Cannot waive child support rights (courts won't enforce that regardless)\n— Full financial disclosure helps — courts are skeptical of agreements signed without knowing what the other person owns\n\nCourts in NY have thrown out prenups signed under duress or without adequate disclosure. The process matters as much as the document.\n\nEasyLegalFiling.com has an attorney-designed NY prenup template with the disclosure schedules included — $149. Still recommend having an attorney review it before signing, but it's the right foundation.`
+        },
+        {
+          angle: "No assets argument",
+          has_link: false,
+          text: `"We don't have any assets so we don't need a prenup" is the most common reason people skip it.\n\nHere's why that logic breaks down: a prenup covers your future, not just today.\n\nIf you're both broke now but one of you starts a business in year 3 of the marriage, that business's appreciation becomes marital property. If you inherit $200k in year 5, a prenup you already have can protect that — a prenup you try to do after the fact is a postnup, which has higher evidentiary standards.\n\nThe cheapest time to do a prenup is before the wedding. It gets more complicated after.`
+        },
+        {
+          angle: "Postnup option",
+          has_link: true,
+          text: `If you're already married and didn't do a prenup — postnuptial agreements are legally valid in NY.\n\nSame protections, different timing. Courts look at them slightly more skeptically (because one party might feel pressured within a marriage), so the process matters more — independent counsel for each side, proper disclosure, reasonable terms.\n\nCommon reasons people do postnups: one spouse starts a business, receives a large inheritance, or the couple goes through a rough patch and wants to clarify what happens if things don't work out.\n\nEasyLegalFiling.com covers both prenup and postnup for NY. The postnup template includes the additional disclosure language courts expect.`
+        }
+      ],
+      quora: [
+        {
+          angle: "Should I get a prenup with no assets",
+          has_link: false,
+          text: `The "no assets" objection to a prenup is understandable but short-sighted. Here's why:\n\n**What a prenup actually protects:**\n\nFuture income disparity: If one spouse earns significantly more over time, a prenup can define what's marital income and what stays separate.\n\nBusiness interests: Starting a business after marriage means the appreciation in that business value is generally marital property in New York. A prenup can carve out founder equity.\n\nInheritance: Inherited assets are separate property in NY — but co-mingling converts them to marital property. A prenup provides a clear record of intent.\n\nDebt protection: Your spouse's pre-marital student loans aren't your debt — but clarity in a written agreement avoids future disputes.\n\n**The real calculus:**\n\nA prenup isn't a statement of distrust. It's a contract negotiated when both people are at their most cooperative, before financial stress enters the picture. Divorce negotiations happen when people are at their least cooperative.\n\nIn NY, the cost of not having a prenup — if things eventually go wrong — can be enormous. The cost of having one is a few hundred dollars and a direct conversation now.\n\n— Ettrick Campbell, Esq.`
+        },
+        {
+          angle: "When courts throw them out",
+          has_link: true,
+          text: `Not all prenups hold up in New York courts. Understanding what makes them fail helps you understand what makes them valid.\n\n**Common reasons NY courts void prenups:**\n\n1. **Duress**: Signed shortly before the wedding (within days), with social and financial pressure making the agreement feel involuntary. Courts look at the timeline.\n\n2. **Lack of disclosure**: If one party concealed significant assets, courts treat the agreement as made under false pretenses.\n\n3. **No independent representation**: Not legally required, but agreements where one attorney represented both parties, or neither had counsel, get heightened scrutiny.\n\n4. **Unconscionable terms**: A provision leaving one spouse with nothing after a 20-year marriage while the other takes everything — courts may refuse to enforce this.\n\n5. **Child-related provisions**: Courts will not enforce prenup terms that waive or limit child support. Children's rights are non-waivable.\n\n**What makes a prenup bulletproof:**\n- Signed at least 30 days before the wedding\n- Each party had independent counsel or knowingly waived it in writing\n- Full financial disclosure schedules attached\n- Terms that are fair (not just legal)\n\nEasyLegalFiling.com's prenup template includes the disclosure schedules and proper execution language courts look for. Worth having an attorney review before signing, but the template gets the structure right.\n\n— Ettrick Campbell, Esq.`
+        }
+      ],
+      tiktok: [
+        {
+          angle: "Reframe hook",
+          has_link: false,
+          text: `A prenup isn't about not trusting your partner.\n\nIt's a contract you negotiate when you love each other most — before money stress, kids, and life make everything complicated.\n\nEvery other business decision you make carefully. Why not this one?`
+        },
+        {
+          angle: "Specific protection hook",
+          has_link: true,
+          text: `If you start a business after you get married and never got a prenup — your spouse may be entitled to half of it in a divorce.\n\nThat's New York law, not an opinion.\n\nEasyLegalFiling.com has an attorney-designed prenup template for $149.`
+        },
+        {
+          angle: "No assets myth",
+          has_link: false,
+          text: `"We don't need a prenup, we have nothing."\n\nYou're not protecting what you have now.\n\nYou're protecting the business you'll start, the inheritance you'll receive, the income gap that develops over 10 years.`
+        }
+      ],
+      checklist: [
+        "Reddit reply 1 → post in r/relationship_advice (what it protects — no link)",
+        "Reddit reply 2 → post in r/legaladvice (NY rules — includes link)",
+        "Reddit reply 3 → post in r/personalfinance (no assets argument — no link)",
+        "Reddit reply 4 → post in r/AskNYC or r/financialindependence (postnup option — includes link)",
+        "Quora answer 1 → search 'do I need a prenup if I have no assets'",
+        "Quora answer 2 → search 'can a prenup be thrown out in New York'",
+        "TikTok → post across 'prenup before marriage' and 'prenup worth it' videos"
+      ]
+    },
+
+    poa: {
+      tiktok_search_terms: "power of attorney explained 2025, what happens no power of attorney, who controls money if incapacitated, durable power of attorney NY",
+      reddit: [
+        {
+          angle: "The bank account scenario",
+          has_link: false,
+          text: `Real scenario that happens more than people think:\n\nSomeone has a stroke or serious accident. Their spouse goes to the bank to pay the mortgage. The bank says: "We can't let you access that individual account without legal authority."\n\nThe spouse can't get that authority without going to court for guardianship. That takes 3–6 months minimum, requires a lawyer, costs $3,000–$10,000+, and requires medical evidence and court hearings.\n\nMeanwhile, mortgage payments, utilities, bills — all frozen until the court acts.\n\nA Durable Power of Attorney signed before the emergency would have taken 20 minutes to create and given the spouse immediate legal authority. Under NY's 2021 law, banks face sanctions for refusing a valid NY POA.\n\nThis isn't an edge case. This is what happens in the real world.`
+        },
+        {
+          angle: "NY 2021 law change",
+          has_link: true,
+          text: `New York updated its Power of Attorney law significantly in 2021. Key changes:\n\n1. Banks are now legally required to accept a properly executed NY statutory POA — previously, many banks had their own forms and would reject standard POAs. Now they face liability for refusal.\n\n2. "Durable" is now the default — it survives incapacity automatically unless you specifically state otherwise. Old NY POAs sometimes had to be worded very carefully to be durable.\n\n3. Gifts and self-dealing now require a separate "Statutory Gifts Rider" — this actually protects you from an agent who might try to give themselves your assets.\n\n4. Electronic signatures are valid under certain conditions.\n\nIf you have an old NY POA from before 2021, it's worth reviewing whether it still does what you think it does.\n\nEasyLegalFiling.com generates a current NY-compliant POA under the 2021 law with the proper statutory language and gifts rider — $49.`
+        },
+        {
+          angle: "Joint accounts aren't enough",
+          has_link: false,
+          text: `Common assumption: "I have joint accounts with my spouse so I don't need a POA."\n\nJoint accounts solve the bank account problem. But only that problem.\n\nA POA covers:\n— Your individual accounts (not joint)\n— Real estate transactions (your spouse can't sign a deed for you without it)\n— Business interests\n— Tax filings\n— Government benefits (Social Security, Medicare)\n— Legal matters\n\nAlso — if you're the one incapacitated, you might have accounts your spouse doesn't know about, or you might need someone to manage your small business or rental property. Joint accounts don't help there.\n\nAnd for unmarried couples: joint accounts are the ONLY protection without a POA. No automatic rights otherwise.`
+        },
+        {
+          angle: "Who to name as agent",
+          has_link: true,
+          text: `The hardest part of a POA isn't the document — it's choosing the right agent.\n\nYour agent gets significant financial power. Choosing wrong can be costly. Things to consider:\n\n— Pick someone organized and financially responsible, not just someone you trust emotionally\n— Name a successor agent (if your primary can't act, who's next?)\n— Consider whether you want to limit the powers (real estate only, not investments, etc.) or give full authority\n— Think about geographic proximity — your agent may need to appear at a bank or sign documents in person\n\nMost people name a spouse, then an adult child as successor. But sometimes a sibling or close friend is actually the better choice.\n\nThe document itself is at EasyLegalFiling.com for $49 — it has the full NY statutory form with optional power limitations and a separate gifts rider section.`
+        }
+      ],
+      quora: [
+        {
+          angle: "What happens without one",
+          has_link: false,
+          text: `Without a Power of Attorney in New York, incapacity creates a legal vacuum that courts have to fill — expensively and slowly.\n\n**The guardianship process:**\nWhen someone becomes incapacitated without a POA, any interested party (spouse, child, sibling) must file an Article 81 guardianship proceeding in Supreme Court. The process requires:\n- Medical evidence of incapacity from qualified physicians\n- A court-appointed evaluator to assess the person's condition\n- Court hearings (typically 3–6 months from filing)\n- Appointment of a guardian with ongoing court supervision\n- Annual accountings to the court\n- A surety bond (insurance against the guardian misusing assets)\n\nTotal cost: $3,000–$15,000+ depending on complexity and whether anyone contests the proceeding.\n\nOnce appointed, the guardian must get court approval for major financial decisions — selling property, making large investments, changing estate plans.\n\n**What a Durable POA costs by comparison:**\nThe document itself takes 20 minutes to create. Execution requires two witnesses and a notary. Under the 2021 NY law, financial institutions must accept it or face liability.\n\nThe POA isn't just for elderly people. Accidents happen at any age. The question isn't whether you'll need it — it's whether you'll have it ready when you do.\n\n— Ettrick Campbell, Esq.`
+        },
+        {
+          angle: "What powers to include",
+          has_link: true,
+          text: `A New York Durable Power of Attorney can be general (covering all financial matters) or limited (covering specific types of transactions). Here's how to think about what to include:\n\n**Standard powers most people include:**\n- Bank account access and management\n- Real estate transactions (buying, selling, mortgaging)\n- Investment management\n- Tax filing and representation\n- Business operations\n- Government benefit management (Social Security, Medicare/Medicaid)\n- Retirement account management\n\n**Powers that require a Statutory Gifts Rider (separate document):**\nAny power to make gifts — including to the agent themselves, to family members, or to charities — requires a separate Gifts Rider with specific language. Without this, your agent cannot legally make gifts on your behalf, even small ones.\n\n**What a POA cannot do:**\n- Make medical decisions (that requires a Health Care Proxy, a separate document)\n- Vote on your behalf\n- Make a will for you\n- Act after your death (the POA terminates at death — the executor takes over)\n\n**Important timing note:**\nA POA must be created while you have legal capacity to sign. Once incapacity occurs, it's too late — guardianship is the only option.\n\nEasyLegalFiling.com generates the complete NY POA package including the Statutory Gifts Rider with proper 2021-compliant language for $49.\n\n— Ettrick Campbell, Esq.`
+        }
+      ],
+      tiktok: [
+        {
+          angle: "Bank scenario hook",
+          has_link: false,
+          text: `Your spouse can't access YOUR bank account if you're in a coma.\n\nNot without going to court first.\n\nThat process takes months and costs thousands. A Power of Attorney takes 20 minutes.`
+        },
+        {
+          angle: "2021 law hook",
+          has_link: true,
+          text: `New York updated its Power of Attorney law in 2021.\n\nBanks now legally have to accept it — they used to be able to reject it and many did.\n\nEasyLegalFiling.com has the updated NY version for $49.`
+        },
+        {
+          angle: "Young people hook",
+          has_link: false,
+          text: `Power of Attorney isn't just for old people.\n\nIf you're in a serious accident at 32, someone needs legal authority to pay your rent, manage your accounts, and handle your affairs while you recover.\n\nWithout it, they go to court. That's the reality.`
+        }
+      ],
+      checklist: [
+        "Reddit reply 1 → post in r/legaladvice (bank scenario — no link)",
+        "Reddit reply 2 → post in r/personalfinance (2021 law — includes link)",
+        "Reddit reply 3 → post in r/legaladvice or r/AskNYC (joint accounts myth — no link)",
+        "Reddit reply 4 → post in r/financialindependence (who to name — includes link)",
+        "Quora answer 1 → search 'what happens if you have no power of attorney'",
+        "Quora answer 2 → search 'what powers should I give in a power of attorney NY'",
+        "TikTok → post across 'power of attorney explained' and 'financial protection' videos"
+      ]
+    },
+
+    quiz: {
+      tiktok_search_terms: "legal documents every adult needs, am I legally protected, financial protection checklist, legal planning 2025",
+      reddit: [
+        {
+          angle: "The gap most people have",
+          has_link: false,
+          text: `Most adults in their 30s and 40s are missing at least 2 of the 3 foundational legal documents. Here's the baseline:\n\n1. **Will** — controls property distribution, names who raises your kids, appoints your executor\n2. **Durable Power of Attorney** — gives someone financial authority if you're incapacitated\n3. **Health Care Proxy** — designates who makes medical decisions if you can't speak for yourself\n\nThe most common gap I see: people have a will (or think they do) but no POA. The POA is actually more urgent during working years — incapacity from an accident or illness is far more common than death in your 30s–50s.\n\nIf you have a business or a relationship with financial disparity, add a fourth: a prenup or shareholder agreement.\n\nNone of this has to be expensive. The documents themselves are simple. It's the lack of them that costs.`
+        },
+        {
+          angle: "Beneficiary designations",
+          has_link: false,
+          text: `Here's the thing most people miss: your will might be the least important legal document you have.\n\nRetirement accounts (401k, IRA), life insurance, and accounts with a TOD (Transfer on Death) designation pass directly to whoever you named as beneficiary — completely bypassing your will and probate.\n\nIf your 401k still says your ex is the beneficiary, your ex gets it. Doesn't matter what your will says.\n\nSo before you worry about whether your will is perfect:\n— Log into every retirement account and check the beneficiary\n— Check your life insurance\n— See if your bank accounts have a TOD or POD designation set up\n\nThese often haven't been updated since you opened the account 10 years ago. This is one of the highest-leverage 20-minute tasks most people never do.`
+        },
+        {
+          angle: "New relationship checklist",
+          has_link: true,
+          text: `If you're in a new serious relationship or recently got married, here's the actual legal checklist:\n\n**Immediate (before anything else):**\n— Update beneficiary designations on all accounts\n— Check title on real estate — whose name is it in?\n\n**Within 6 months:**\n— Will (especially if you have kids or significant assets)\n— Health Care Proxy naming your partner\n— Durable Power of Attorney naming your partner\n\n**If getting married:**\n— Discuss prenup if either of you has a business, significant debt, or expects inheritance\n\n**Ongoing:**\n— Update documents after major life changes (kids, divorce, death in family, move to different state)\n\nEasyLegalFiling.com covers will, POA, and health care proxy in one place. $79 for the will, $49 for POA, free preview before you pay.`
+        },
+        {
+          angle: "State law matters",
+          has_link: true,
+          text: `One thing that trips people up with online legal documents: laws vary by state and the document has to match where you live.\n\nA will valid in Florida isn't automatically valid in New York. NY requires two witnesses (not just a notary). NY's POA law changed significantly in 2021. NY's Health Care Proxy has specific statutory language.\n\nUsing a generic template that isn't state-specific is one of the most common DIY legal mistakes — and it usually only gets discovered after death, when it's too late to fix.\n\nEasyLegalFiling.com is specific to New York law. The documents use current statutory forms, not generic templates. Worth the difference.`
+        }
+      ],
+      quora: [
+        {
+          angle: "What every adult needs",
+          has_link: true,
+          text: `The legal documents every adult needs depend somewhat on life stage, but the baseline is consistent:\n\n**The universal three (every adult over 18):**\n\n1. **Last Will and Testament**: Controls distribution of your probate estate, names your executor, designates a guardian for minor children. Without it, state intestacy law decides everything — and it rarely matches what people actually want.\n\n2. **Durable Power of Attorney**: Authorizes a trusted person to manage your finances if you become incapacitated. Without it, family members must petition a court for guardianship — a process that takes months and costs thousands.\n\n3. **Health Care Proxy / Advance Directive**: Names who makes medical decisions if you can't, and documents your wishes about life-sustaining treatment. Emergency rooms see this regularly — without one, whoever happens to be there makes decisions, sometimes leading to family conflict during the worst moments.\n\n**Additional based on situation:**\n- Prenuptial or postnuptial agreement: if married or engaged with any financial disparity, business ownership, or inheritance expectation\n- Living Trust: if you have significant assets, value privacy, or want to avoid probate\n- Buy-sell agreement: if you own a business with partners\n\n**The most common gap**: People have a will but no Power of Attorney. The POA is actually more critical during working years — you're statistically far more likely to experience incapacity than death in your 30s or 40s.\n\nEasyLegalFiling.com handles NY-specific versions of all three foundational documents. Full preview before you pay.\n\n— Ettrick Campbell, Esq.`
+        },
+        {
+          angle: "How often to update",
+          has_link: false,
+          text: `Legal documents aren't set-and-forget. Here's when they need to be reviewed or updated:\n\n**Always update after:**\n- Marriage or divorce\n- Birth or adoption of a child\n- Death of a named beneficiary, executor, agent, or guardian\n- Significant change in assets (selling a business, inheriting property)\n- Moving to a different state (documents should comply with your current state's law)\n- Estrangement or reconciliation with a family member you've named\n\n**Review every 3–5 years** even without major life changes — tax law changes, state law updates (NY's POA law changed in 2021), and your own circumstances evolve.\n\n**Common mistakes from not updating:**\n- Ex-spouse still named as executor, agent, or beneficiary\n- Guardian for children is named person who is now elderly or deceased\n- POA agent predeceased you with no successor named\n- Will executed in another state doesn't meet NY's two-witness requirement\n\nThe most important thing isn't having perfect documents — it's having current ones. An outdated will that names the wrong executor creates almost as many problems as no will at all.\n\n— Ettrick Campbell, Esq.`
+        }
+      ],
+      tiktok: [
+        {
+          angle: "Gap hook",
+          has_link: false,
+          text: `Most people in their 30s and 40s are missing at least 2 of the 3 legal documents that protect them if something goes wrong.\n\nWill. Power of Attorney. Health Care Proxy.\n\nNot having them isn't just a personal risk — it's a burden you're leaving for your family.`
+        },
+        {
+          angle: "Beneficiary hook",
+          has_link: false,
+          text: `Your will doesn't control your 401k.\n\nRetirement accounts go directly to whoever you named as beneficiary — bypassing everything.\n\nLog in and check right now. That name might be 10 years old.`
+        },
+        {
+          angle: "Quiz hook",
+          has_link: true,
+          text: `There's a free quiz that tells you exactly which legal documents you're missing based on your actual situation.\n\nTakes 2 minutes. No email required.\n\nEasyLegalFiling.com — Legal Document Quiz.`
+        }
+      ],
+      checklist: [
+        "Reddit reply 1 → post in r/personalfinance (the 3 documents — no link)",
+        "Reddit reply 2 → post in r/financialindependence (beneficiary designations — no link)",
+        "Reddit reply 3 → post in r/legaladvice or r/AskNYC (new relationship checklist — includes link)",
+        "Reddit reply 4 → post in r/personalfinance or r/AskNYC (state law matters — includes link)",
+        "Quora answer 1 → search 'what legal documents does every adult need'",
+        "Quora answer 2 → search 'how often should I update my will and legal documents'",
+        "TikTok → post across 'legal documents everyone needs' and 'financial protection' videos"
+      ]
+    }
+
+  };
+
+  const data = banks[topic] || banks.immigration;
+
+  // Rotate content slightly based on day of week to add variation
+  const dayOffset = new Date().getDay();
+  if (dayOffset % 2 === 1 && data.reddit.length >= 4) {
+    // Swap order of replies 2 and 3 on odd days
+    [data.reddit[1], data.reddit[2]] = [data.reddit[2], data.reddit[1]];
+  }
+
+  return data;
+}
+
 // ═══════════════════════════
 //  MAIN GENERATOR — Claude API
 // ═══════════════════════════
@@ -2116,26 +2525,26 @@ async function genAllPlatforms() {
   const btn = document.getElementById('gen-btn');
   const loading = document.getElementById('gen-loading');
   const errBox = document.getElementById('gen-error');
- 
+
   btn.disabled = true;
   btn.textContent = '⏳ Generating…';
   loading.style.display = 'block';
   errBox.style.display = 'none';
- 
+
   // Hide old results
   ['reddit-section','quora-section','tiktok-section','daily-checklist'].forEach(id => {
     document.getElementById(id).style.display = 'none';
   });
- 
+
   const topicLabel = topicLabels[selectedTopic];
   const today = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
- 
+
   const prompt = `You are Ettrick Campbell, Esq., a New York attorney who runs EasyLegalFiling.com — a site where people can get attorney-designed legal documents (wills, divorce forms, power of attorney, prenups, immigration motions) for a fraction of lawyer fees.
- 
+
 Today is ${today}. Topic: ${topicLabel}.
- 
+
 Generate social media content for someone scrolling Reddit, Quora, and TikTok with a real legal problem RIGHT NOW. Your goal is to help them genuinely — the site mention should feel earned, not spammy.
- 
+
 CRITICAL RULES:
 - Sound like a real helpful person who happens to be a lawyer — NOT like an ad
 - Vary sentence structure completely between replies — NO two replies should start the same way
@@ -2147,7 +2556,7 @@ CRITICAL RULES:
 - Do NOT use the phrase "don't panic"
 - Use specific legal facts, deadlines, or NY law details when relevant — this is what gets upvotes
 - For the 2 replies that mention EasyLegalFiling.com, weave it in naturally — never as the first or last sentence of a reply
- 
+
 Return ONLY a JSON object exactly like this (no markdown, no backticks, no explanation):
 {
   "tiktok_search_terms": "3–4 TikTok search terms for this topic, comma separated",
@@ -2176,30 +2585,12 @@ Return ONLY a JSON object exactly like this (no markdown, no backticks, no expla
     "Post 3 TikTok comments on 10k+ view videos"
   ]
 }`;
- 
+
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 3000,
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
- 
-    const data = await res.json();
- 
-    if (!data.content || !data.content.length) {
-      throw new Error(JSON.stringify(data));
-    }
- 
-    const raw = data.content.map(b => b.text || '').join('');
-    const clean = raw.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
- 
+    // Use built-in content library (no external API needed — no CORS issues)
+    const parsed = buildContentForTopic(selectedTopic);
     renderResults(parsed);
- 
+
   } catch(err) {
     errBox.textContent = '⚠️ Generation failed: ' + err.message + ' — Try again in a moment.';
     errBox.style.display = 'block';
@@ -2209,7 +2600,7 @@ Return ONLY a JSON object exactly like this (no markdown, no backticks, no expla
     loading.style.display = 'none';
   }
 }
- 
+
 // ═══════════════════
 //  RENDER RESULTS
 // ═══════════════════
@@ -2218,25 +2609,25 @@ function renderResults(data) {
   if (data.tiktok_search_terms) {
     document.getElementById('tiktok-search-terms').textContent = data.tiktok_search_terms;
   }
- 
+
   // Reddit
   if (data.reddit && data.reddit.length) {
     renderPlatformReplies('reddit-replies', data.reddit, 'reddit');
     document.getElementById('reddit-section').style.display = 'block';
   }
- 
+
   // Quora
   if (data.quora && data.quora.length) {
     renderPlatformReplies('quora-replies', data.quora, 'quora');
     document.getElementById('quora-section').style.display = 'block';
   }
- 
+
   // TikTok
   if (data.tiktok && data.tiktok.length) {
     renderPlatformReplies('tiktok-replies', data.tiktok, 'tiktok');
     document.getElementById('tiktok-section').style.display = 'block';
   }
- 
+
   // Checklist
   if (data.checklist && data.checklist.length) {
     const el = document.getElementById('checklist-items');
@@ -2247,11 +2638,11 @@ function renderResults(data) {
       </div>`).join('');
     document.getElementById('daily-checklist').style.display = 'block';
   }
- 
+
   // Smooth scroll
   document.getElementById('reddit-section').scrollIntoView({behavior:'smooth',block:'start'});
 }
- 
+
 function toggleCheck(el) {
   const box = el.querySelector('.chk-box');
   const isChecked = box.style.background === 'var(--purple)';
@@ -2268,7 +2659,7 @@ function toggleCheck(el) {
     el.style.opacity = '0.45';
   }
 }
- 
+
 function renderPlatformReplies(containerId, replies, platform) {
   const colors = {
     reddit: {bg:'#fff8f6',border:'#ffd0b8',label:'#cc3700',accent:'var(--orange)'},
@@ -2278,12 +2669,12 @@ function renderPlatformReplies(containerId, replies, platform) {
   const c = colors[platform] || colors.reddit;
   const el = document.getElementById(containerId);
   el.innerHTML = '';
- 
+
   replies.forEach((reply, i) => {
     const linkBadge = reply.has_link
       ? `<span style="font-size:.65rem;background:#e6f9ee;color:var(--green);border:1px solid #86efac;padding:1px 7px;border-radius:7px;font-weight:700;margin-left:6px">🔗 includes link</span>`
       : `<span style="font-size:.65rem;background:var(--paper2);color:var(--muted);border:1px solid var(--border);padding:1px 7px;border-radius:7px;font-weight:700;margin-left:6px">no link — pure value</span>`;
- 
+
     const div = document.createElement('div');
     div.style.cssText = `background:${c.bg};border:1.5px solid ${c.border};border-radius:12px;overflow:hidden`;
     div.innerHTML = `
@@ -2303,14 +2694,14 @@ function renderPlatformReplies(containerId, replies, platform) {
     el.appendChild(div);
   });
 }
- 
+
 function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 function escapeBacktick(str) {
   return str.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');
 }
- 
+
 function copyText(btn, text) {
   navigator.clipboard.writeText(text).then(() => {
     const orig = btn.textContent;
@@ -2326,7 +2717,7 @@ function copyText(btn, text) {
     }, 2000);
   });
 }
- 
+
 function markDone(btn) {
   const card = btn.closest('div[style*="border-radius:12px"]');
   if (card) {
@@ -2336,7 +2727,7 @@ function markDone(btn) {
   btn.textContent = '✓ Done';
   btn.style.color = 'var(--green)';
 }
- 
+
 // Legacy copy functions used elsewhere in the file
 function copyReply() {
   const text = document.getElementById('reply-text')?.innerText;
@@ -2348,7 +2739,7 @@ function copyReply() {
 }
 function markPosted() {}
 function genReply() { genAllPlatforms(); }
- 
+
 </script>
 </body>
 </html>
