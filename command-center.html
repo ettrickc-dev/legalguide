@@ -1992,5 +1992,149 @@ window.addEventListener('scroll',()=>{
   document.getElementById('scr').classList.toggle('show',window.scrollY>400);
 },{passive:true});
 </script>
+  <script>
+let selectedTopic = "immigration";
+let selectedPlatform = "reddit";
+let selectedIntent = "high";
+let selectedVariant = 0;
+
+// 🔑 PUT YOUR OPENAI API KEY HERE
+const OPENAI_API_KEY = "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";
+
+// SELECT TOPIC
+function selTopic(el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedTopic = el.dataset.topic;
+}
+
+// SELECT PLATFORM
+function selPlat(platform) {
+  selectedPlatform = platform;
+  document.querySelectorAll('.pb').forEach(b => b.classList.remove('sel-reddit','sel-quora','sel-facebook','sel-tiktok'));
+  document.getElementById("pb-" + platform).classList.add("sel-" + platform);
+}
+
+// SELECT INTENT
+function selIntent(el, intent) {
+  document.querySelectorAll('.intent-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedIntent = intent;
+}
+
+// SELECT VARIANT
+function selVariant(index) {
+  selectedVariant = index;
+  document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.var-btn')[index].classList.add('active');
+}
+
+// 🔥 REAL AI GENERATION
+async function genReply() {
+  const topicMap = {
+    immigration: "immigration issue",
+    divorce: "divorce in New York",
+    will: "wills and estate",
+    prenup: "prenup agreement",
+    poa: "power of attorney",
+    quiz: "general legal issue"
+  };
+
+  const prompt = `
+You are a lawyer writing a helpful, high-converting response.
+
+Topic: ${topicMap[selectedTopic]}
+
+Instructions:
+- Answer like a real human lawyer
+- Use simple language
+- Add urgency if needed
+- No emojis
+- Do not sound robotic
+- No spam tone
+- Subtly mention EasyLegalFiling at the end
+- Max 180 words
+`;
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + OPENAI_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-5.3",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7
+      })
+    });
+
+    const data = await res.json();
+
+    if (!data.choices || !data.choices.length) {
+      alert("Error: " + JSON.stringify(data));
+      return;
+    }
+
+    const reply = data.choices[0].message.content;
+
+    document.getElementById("reply-text").innerText = reply;
+    document.getElementById("reply-box").style.display = "block";
+
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+}
+
+// 🔍 OPEN SEARCH PAGE
+function openSearch() {
+  let query = "";
+
+  if (selectedTopic === "immigration") query = "missed immigration court help";
+  if (selectedTopic === "divorce") query = "divorce cost new york";
+  if (selectedTopic === "will") query = "what happens if no will";
+  if (selectedTopic === "prenup") query = "do I need prenup";
+  if (selectedTopic === "poa") query = "power of attorney help";
+  if (selectedTopic === "quiz") query = "legal help what should I do";
+
+  let url = "";
+
+  if (selectedPlatform === "reddit") {
+    url = "https://www.reddit.com/search/?q=" + encodeURIComponent(query) + "&sort=new";
+  }
+  if (selectedPlatform === "quora") {
+    url = "https://www.quora.com/search?q=" + encodeURIComponent(query);
+  }
+  if (selectedPlatform === "facebook") {
+    url = "https://www.facebook.com/search/top?q=" + encodeURIComponent(query);
+  }
+  if (selectedPlatform === "tiktok") {
+    url = "https://www.tiktok.com/search?q=" + encodeURIComponent(query);
+  }
+
+  window.open(url, "_blank");
+}
+
+// COPY REPLY
+function copyReply() {
+  const text = document.getElementById("reply-text").innerText;
+  navigator.clipboard.writeText(text);
+
+  const msg = document.getElementById("copied-msg");
+  msg.classList.add("show");
+
+  setTimeout(() => {
+    msg.classList.remove("show");
+  }, 2000);
+}
+
+// MARK POSTED
+function markPosted() {
+  selectedVariant = (selectedVariant + 1) % 3;
+  selVariant(selectedVariant);
+  alert("Next reply ready.");
+}
+</script>
 </body>
 </html>
