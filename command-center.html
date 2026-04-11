@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyLegalFiling — Traffic Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f0e0e;--ink2:#2a2828;--paper:#faf8f5;--paper2:#f2efe9;
+  --orange:#e8470a;--orange-lt:#fff3ee;--orange-dk:#c03a06;
+  --purple:#3d1fa8;--purple-lt:#ede9ff;--purple-mid:#5b3fd4;
+  --teal:#0a6b60;--teal-lt:#e0faf7;--green:#146b3a;--green-lt:#e6f9ee;
+  --red:#b91c1c;--red-lt:#fff1f1;--amber:#b45309;--amber-lt:#fffbeb;
+  --border:#e2ded6;--muted:#6b6560;--muted2:#9c9590;
+  --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --r:8px;--r-lg:14px;--r-xl:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'DM Serif Display',serif;line-height:1.2}
+a{color:var(--purple);text-decoration:none}
+code,pre{font-family:'JetBrains Mono',monospace}
+ 
+/* TOPBAR */
+.topbar{background:var(--ink);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:300}
+.topbar-brand{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff}
+.topbar-brand span{color:#e8470a}
+.topbar-pills{display:flex;gap:8px;align-items:center}
+.tpill{font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.55)}
+.tpill.live{background:rgba(20,107,58,.35);color:#6ee7b7;border-color:rgba(110,231,183,.25)}
+ 
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 54px)}
+@media(max-width:760px){.layout{grid-template-columns:1fr}}
+ 
+/* SIDEBAR */
+.sidebar{background:var(--paper2);border-right:1px solid var(--border);padding:16px 0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto}
+@media(max-width:760px){.sidebar{display:none}}
+.slabel{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);padding:14px 14px 5px;display:block}
+.slink{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r);cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);transition:all .13s;border:none;background:none;width:100%;text-align:left}
+.slink:hover{background:var(--paper);color:var(--ink)}
+.slink.active{background:#fff;color:var(--purple);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.sbadge{margin-left:auto;font-size:.63rem;font-weight:800;background:var(--orange);color:#fff;padding:2px 6px;border-radius:8px}
+.sbadge.g{background:var(--green)}
+.sin{font-size:14px;width:18px;text-align:center}
+ 
+/* MAIN */
+.main{overflow-y:auto;padding:24px 28px 60px}
+@media(max-width:760px){.main{padding:14px 14px 80px}}
+ 
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+ 
+/* PAGE HEADING */
+.ph{margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.ph h2{font-size:1.55rem;color:var(--ink);margin-bottom:4px}
+.ph p{font-size:.88rem;color:var(--muted);line-height:1.6;max-width:620px}
+ 
+/* CARDS */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);margin-bottom:18px;overflow:hidden}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink)}
+.card-sub{font-size:.8rem;color:var(--muted);margin-top:2px;line-height:1.5}
+.card-body{padding:18px 20px}
+ 
+/* HOW IT WORKS BANNER */
+.how-banner{background:linear-gradient(135deg,#1a0838,#0a2c1a);border-radius:var(--r-xl);padding:20px 22px;margin-bottom:18px;color:#fff}
+.how-banner h3{font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:12px;color:#fff}
+.how-steps-row{display:flex;gap:0;flex-wrap:wrap}
+.how-step{flex:1;min-width:150px;padding:10px 14px;border-right:1px solid rgba(255,255,255,.1);last-child{border:none}}
+.how-step:last-child{border-right:none}
+.how-step-num{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.35);margin-bottom:4px}
+.how-step-text{font-size:.83rem;color:rgba(255,255,255,.8);line-height:1.5;font-weight:500}
+.how-step-sub{font-size:.72rem;color:rgba(255,255,255,.4);margin-top:3px}
+ 
+/* TOPIC CHIPS */
+.chip-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:600px){.chip-row{grid-template-columns:1fr 1fr}}
+.chip{background:var(--paper2);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:10px 12px;cursor:pointer;transition:all .13s}
+.chip:hover{border-color:var(--purple);background:var(--purple-lt)}
+.chip.sel{border-color:var(--purple);background:var(--purple-lt);box-shadow:0 0 0 3px rgba(61,31,168,.08)}
+.chip-icon{font-size:16px;margin-bottom:4px}
+.chip-name{font-size:.82rem;font-weight:700;color:var(--ink);display:block}
+.chip-hint{font-size:.7rem;color:var(--muted);margin-top:1px}
+ 
+/* PLATFORM BUTTONS */
+.plat-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.pb{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:.79rem;font-weight:600;cursor:pointer;transition:all .13s}
+.pb:hover{border-color:var(--muted)}
+.pb.sel-reddit{border-color:#ff4500;background:#fff8f6;color:#cc3700}
+.pb.sel-quora{border-color:#b92b27;background:#fff8f8;color:#8b1c19}
+.pb.sel-facebook{border-color:#1877f2;background:#f0f4ff;color:#1455c0}
+.pb.sel-tiktok{border-color:#000;background:#f7f7f7;color:#000}
+ 
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:var(--r);font-size:.84rem;font-weight:600;cursor:pointer;border:none;transition:all .13s;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-primary:hover{background:var(--purple-mid)}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:var(--orange-dk)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--ink2)}
+.btn-ghost:hover{border-color:var(--purple);color:var(--purple)}
+.btn-green{background:var(--green);color:#fff}
+.btn-sm{padding:6px 12px;font-size:.77rem}
+.btn-xs{padding:3px 9px;font-size:.71rem;border-radius:6px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+ 
+/* REPLY OUTPUT */
+.reply-box{background:var(--ink);border-radius:var(--r-lg);padding:20px;margin-top:14px;display:none}
+.reply-box-label{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.reply-box-label::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block}
+.reply-text{font-size:.87rem;color:rgba(255,255,255,.85);line-height:1.8;white-space:pre-wrap}
+.reply-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.copied-msg{font-size:.73rem;color:#22c55e;font-weight:600;opacity:0;transition:opacity .3s;padding:6px 0}
+.copied-msg.show{opacity:1}
+ 
+/* VARIANT SELECTOR */
+.variant-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.var-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .13s}
+.var-btn.active{border-color:var(--purple);background:var(--purple-lt);color:var(--purple)}
+ 
+/* INTENT SCORE */
+.intent-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.intent-chip{padding:6px 14px;border-radius:20px;font-size:.77rem;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .13s}
+.ic-high{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.ic-high.sel{background:#991b1b;color:#fff;border-color:#991b1b}
+.ic-med{background:var(--amber-lt);color:var(--amber);border-color:#fde68a}
+.ic-med.sel{background:var(--amber);color:#fff;border-color:var(--amber)}
+.ic-low{background:var(--paper2);color:var(--muted);border-color:var(--border)}
+.ic-low.sel{background:var(--muted);color:#fff}
+ 
+/* QUEUE */
+.q-list{display:flex;flex-direction:column;gap:8px}
+.q-item{background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:10px;transition:all .13s}
+.q-item:hover{border-color:var(--border);box-shadow:var(--shadow)}
+.q-item.done{opacity:.4}
+.q-item.done .q-text{text-decoration:line-through}
+.q-meta{flex:1;min-width:0}
+.q-plat{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.q-plat.reddit{color:#cc3700}
+.q-plat.quora{color:#8b1c19}
+.q-plat.facebook{color:#1455c0}
+.q-plat.tiktok{color:#000}
+.q-text{font-size:.84rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-sub{font-size:.73rem;color:var(--muted)}
+.q-btns{display:flex;gap:5px;flex-shrink:0}
+ 
+/* INTENT BADGE */
+.ib{font-size:.63rem;font-weight:800;padding:2px 7px;border-radius:8px;text-transform:uppercase;white-space:nowrap}
+.ib-h{background:#fee2e2;color:#991b1b}
+.ib-m{background:var(--amber-lt);color:var(--amber)}
+.ib-l{background:var(--paper2);color:var(--muted)}
+ 
+/* LOG */
+.log-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.log-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.log-table th{background:var(--ink);color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:.75rem}
+.log-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--muted)}
+.log-table td:first-child{font-weight:600;color:var(--ink)}
+ 
+/* GPS STEPS */
+.gps-wrap{display:flex;flex-direction:column;gap:0}
+.gps-item{display:flex;gap:14px;padding-bottom:20px;position:relative}
+.gps-item:not(:last-child)::before{content:'';position:absolute;left:13px;top:30px;width:2px;bottom:0;background:var(--border)}
+.gps-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;z-index:1;margin-top:2px;color:#fff}
+.gd-once{background:var(--orange)}
+.gd-daily{background:var(--purple)}
+.gd-weekly{background:var(--teal)}
+.gps-content{flex:1}
+.gps-content h4{font-size:.93rem;font-weight:700;color:var(--ink);margin-bottom:5px}
+.gps-content p{font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:6px}
+.gps-content p strong{color:var(--ink)}
+.code-pre{background:var(--ink);border-radius:var(--r);padding:14px;margin:8px 0;font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#86efac;line-height:1.65;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.code-pre .ky{color:#fbbf24}
+.code-pre .cm{color:#6ee7b7;font-style:normal}
+.win-box{background:var(--green-lt);border:1px solid #86efac;border-radius:var(--r);padding:10px 12px;font-size:.8rem;color:var(--green);font-weight:600;margin-top:6px;line-height:1.5}
+.warn-box{background:var(--amber-lt);border:1px solid #fde68a;border-radius:var(--r);padding:10px 12px;font-size:.8rem;color:var(--amber);font-weight:600;margin-top:6px;line-height:1.5}
+.info-box{background:var(--purple-lt);border:1px solid #c4b5fd;border-radius:var(--r);padding:10px 12px;font-size:.8rem;color:var(--purple);font-weight:600;margin-top:6px;line-height:1.5}
+.mono{font-family:'JetBrains Mono',monospace;font-size:.8em;background:var(--paper2);padding:1px 5px;border-radius:4px;color:var(--orange-dk)}
+ 
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:.82rem;margin:10px 0}
+.tbl th{background:var(--ink);color:#fff;padding:9px 12px;text-align:left;font-weight:600;font-size:.78rem}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top}
+.tbl td:first-child{font-weight:600;color:var(--ink)}
+.tbl tr:nth-child(even) td{background:var(--paper2)}
+.yes{color:var(--green);font-weight:700}
+.no{color:var(--red);font-weight:700}
+.partial{color:var(--amber);font-weight:700}
+ 
+/* TASK ITEMS */
+.task{display:flex;gap:10px;align-items:flex-start;background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:8px;transition:all .13s}
+.task-cb{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .13s}
+.task-cb:hover{border-color:var(--purple)}
+.task-cb.done{background:var(--purple);border-color:var(--purple)}
+.task-cb.done::after{content:'✓';color:#fff;font-size:.62rem;font-weight:800}
+.task-body{flex:1}
+.task-body strong{font-size:.85rem;font-weight:700;color:var(--ink);display:block;margin-bottom:2px}
+.task-body p{font-size:.79rem;color:var(--muted);line-height:1.55}
+.task-time{font-size:.68rem;font-weight:700;color:var(--teal);background:var(--teal-lt);padding:2px 7px;border-radius:7px;white-space:nowrap;flex-shrink:0}
+.team-block{background:var(--paper2);border:1.5px solid var(--border);border-radius:var(--r-xl);margin-bottom:16px;overflow:hidden}
+.team-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.team-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.team-name{font-weight:700;font-size:.93rem;color:var(--ink)}
+.team-sub{font-size:.78rem;color:var(--muted)}
+.team-tag{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:8px;margin-left:6px}
+.team-body{padding:14px 18px}
+ 
+/* RSS SECTION */
+.rss-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}
+.rss-node{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:10px 14px;font-size:.82rem;font-weight:600;color:var(--ink);text-align:center;min-width:100px}
+.rss-arrow{color:var(--muted2);font-size:1.2rem;font-weight:700}
+.rss-node.highlight{border-color:var(--orange);color:var(--orange-dk);background:var(--orange-lt)}
+ 
+/* STAT CARDS */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:800px){.stat-row{grid-template-columns:repeat(2,1fr)}}
+.stat{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:14px}
+.stat-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:6px}
+.stat-val{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--ink);line-height:1}
+.stat-note{font-size:.73rem;color:var(--muted);margin-top:3px}
+ 
+/* MOBILE NAV */
+.mob-nav{display:none;background:var(--ink);position:fixed;bottom:0;left:0;right:0;z-index:200;border-top:1px solid rgba(255,255,255,.08)}
+@media(max-width:760px){.mob-nav{display:flex}}
+.mob-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px;border:none;background:none;cursor:pointer;font-size:.58rem;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.2px;transition:color .13s;text-transform:uppercase}
+.mob-tab.active{color:var(--orange)}
+.mob-tab-icon{font-size:17px}
+ 
+.scroll-top{position:fixed;bottom:22px;right:20px;background:var(--ink);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .3s;z-index:100}
+.scroll-top.show{opacity:1}
+@media(max-width:760px){.scroll-top{bottom:64px}}
+ 
+/* ─── NEW PANELS ─── */
+.machine-flow{display:flex;flex-direction:column;gap:0;counter-reset:mf}
+.mf-row{display:flex;gap:14px;align-items:stretch;padding-bottom:0;position:relative}
+.mf-row:not(:last-child)::before{content:'';position:absolute;left:13px;top:30px;width:2px;bottom:-8px;background:var(--border)}
+.mf-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;z-index:1;margin-top:4px;color:#fff}
+.mf-card{flex:1;background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:12px;transition:border-color .13s}
+.mf-card:hover{border-color:var(--purple)}
+.mf-layer{font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.mf-title{font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:3px}
+.mf-desc{font-size:.79rem;color:var(--muted);line-height:1.55}
+.mf-items{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.mf-tag{font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:8px;background:var(--paper2);border:1px solid var(--border);color:var(--muted)}
+.psychology-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+@media(max-width:640px){.psychology-grid{grid-template-columns:1fr}}
+.psych-card{border-radius:var(--r-lg);padding:16px;border:1px solid transparent}
+.why-counter{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:900;line-height:1;margin-bottom:6px}
+.page-anatomy{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.pa-row{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:var(--r-lg);border:1.5px solid var(--border)}
+.pa-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;color:#fff}
+.pa-label{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.pa-tip{font-size:.77rem;color:var(--muted);line-height:1.5}
+.pa-example{font-family:'JetBrains Mono',monospace;font-size:.75rem;background:var(--paper2);padding:4px 8px;border-radius:5px;color:var(--orange-dk);margin-top:4px;display:inline-block}
+.email-steps{display:flex;flex-direction:column;gap:8px}
+.es-row{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:var(--r-lg)}
+.es-num{width:22px;height:22px;border-radius:50%;font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:#fff}
+.es-body strong{font-size:.86rem;font-weight:700;color:var(--ink);display:block;margin-bottom:2px}
+.es-body p{font-size:.79rem;color:var(--muted);line-height:1.55}
+.track-table{width:100%;border-collapse:collapse;font-size:.81rem}
+.track-table th{background:var(--ink);color:#fff;padding:9px 12px;text-align:left;font-weight:600;font-size:.76rem}
+.track-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.73rem}
+.track-table td:first-child{font-family:'DM Sans',sans-serif;font-weight:600;color:var(--ink);font-size:.82rem}
+.seq-row{display:flex;gap:10px;align-items:stretch;margin-bottom:10px}
+.seq-num{width:32px;height:32px;border-radius:50%;font-size:.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;color:#fff}
+.seq-card{flex:1;border-radius:var(--r-lg);padding:12px 14px;border:1px solid var(--border)}
+.seq-day{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.seq-subj{font-size:.86rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.seq-body{font-size:.78rem;color:var(--muted);line-height:1.55}
+.level-row{display:flex;gap:10px;align-items:flex-start;padding:14px;border:1px solid var(--border);border-radius:var(--r-lg);background:#fff;margin-bottom:8px}
+.lv-dot{width:28px;height:28px;border-radius:50%;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.lv-title{font-size:.87rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.lv-desc{font-size:.79rem;color:var(--muted);line-height:1.55}
+.auto-status{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.as-done{background:var(--green-lt);color:var(--green)}
+.as-ready{background:var(--teal-lt);color:var(--teal)}
+.as-next{background:var(--amber-lt);color:var(--amber)}
+</style>
+</head>
+<body>
+ 
+<div class="topbar">
+  <div class="topbar-brand">Easy<span>Legal</span>Filing <span style="font-size:.7rem;color:rgba(255,255,255,.35);font-family:'DM Sans',sans-serif;font-weight:400;margin-left:6px">Traffic Command Center</span></div>
+  <div class="topbar-pills">
+    <span class="tpill live">● GA Connected</span>
+    <span class="tpill" id="today-date"></span>
+  </div>
+</div>
+ 
+<div class="layout">
+ 
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <span class="slabel">Traffic Engine</span>
+  <button class="slink active" onclick="show('gen')"><span class="sin">✍️</span> Reply Generator <span class="sbadge" id="q-badge">12</span></button>
+  <button class="slink" onclick="show('queue')"><span class="sin">📋</span> Daily Queue</button>
+  <button class="slink" onclick="show('rss')"><span class="sin">📡</span> Auto-Discovery</button>
+  <button class="slink" onclick="show('analytics')"><span class="sin">📊</span> Analytics Actions</button>
+  <button class="slink" onclick="show('team')"><span class="sin">👥</span> Team Tasks <span class="sbadge g" id="t-badge">8</span></button>
+  <span class="slabel">Setup</span>
+  <button class="slink" onclick="show('gps')"><span class="sin">📍</span> GPS Directions</button>
+  <button class="slink" onclick="show('appscript')"><span class="sin">⚙️</span> Automation Setup</button>
+  <span class="slabel">Live Links</span>
+  <a class="slink" href="https://easylegalfiling.com" target="_blank"><span class="sin">🌐</span> Live Site</a>
+  <a class="slink" href="https://analytics.google.com" target="_blank"><span class="sin">📈</span> Google Analytics</a>
+  <a class="slink" href="https://github.com/ettrickc-dev/legalguide" target="_blank"><span class="sin">💻</span> GitHub</a>
+  <a class="slink" href="https://search.google.com/search-console" target="_blank"><span class="sin">🔍</span> Search Console</a>
+  <a class="slink" href="https://script.google.com" target="_blank"><span class="sin">⚡</span> Apps Script</a>
+  <span class="slabel">🆕 Upgrades</span>
+  <button class="slink" onclick="show('machine')"><span class="sin">🔁</span> Traffic Machine</button>
+  <button class="slink" onclick="show('convert')"><span class="sin">💰</span> Conversions</button>
+  <button class="slink" onclick="show('email')"><span class="sin">📧</span> Email Capture</button>
+  <button class="slink" onclick="show('tracking')"><span class="sin">📊</span> Click Tracking</button>
+</nav>
+ 
+<main class="main">
+ 
+<!-- ═══════════════════════════════════
+     REPLY GENERATOR
+═══════════════════════════════════ -->
+<div id="panel-gen" class="panel active">
+  <div class="ph">
+    <h2>Reply Generator</h2>
+    <p>Pick topic + platform → get a reply → copy it → go post it yourself (or give it to your assistant). The app does NOT post for you — you copy and paste it into Reddit/Quora/Facebook. Takes under 2 minutes per reply.</p>
+  </div>
+ 
+  <!-- HOW IT WORKS BANNER -->
+  <div class="how-banner">
+    <h3>⚡ Exactly How This Works — Read Once</h3>
+    <div class="how-steps-row">
+      <div class="how-step"><div class="how-step-num">Step 1</div><div class="how-step-text">Pick topic + platform below</div><div class="how-step-sub">6 topics, 4 platforms</div></div>
+      <div class="how-step"><div class="how-step-num">Step 2</div><div class="how-step-text">Click Generate Reply</div><div class="how-step-sub">Fresh reply appears instantly</div></div>
+      <div class="how-step"><div class="how-step-num">Step 3</div><div class="how-step-text">Click "Open Search Page"</div><div class="how-step-sub">Opens Reddit/Quora/Facebook search for you in a new tab</div></div>
+      <div class="how-step"><div class="how-step-num">Step 4</div><div class="how-step-text">Find a post with few replies</div><div class="how-step-sub">Look for posts from last 7 days, under 10 replies</div></div>
+      <div class="how-step"><div class="how-step-num">Step 5</div><div class="how-step-text">Click "Copy Reply" — paste it in</div><div class="how-step-sub">YOU paste and post it manually. The app does not post for you.</div></div>
+      <div class="how-step"><div class="how-step-num">Step 6</div><div class="how-step-text">Click "Mark Posted" — done</div><div class="how-step-sub">Auto-advances to next angle for tomorrow</div></div>
+    </div>
+  </div>
+ 
+  <!-- REPLY STRUCTURE GUIDE -->
+  <div class="card">
+    <div class="card-head">
+      <div><div class="card-title">🔥 Reply Structure — Why This Converts</div><div class="card-sub">Every generated reply follows this exact HOOK → SOLUTION → AUTHORITY → CTA structure. This is why it works better than just answering the question.</div></div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div style="background:var(--red-lt);border:1px solid #fecaca;border-radius:var(--r-lg);padding:14px">
+          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:6px">1 — HOOK (Line 1)</div>
+          <div style="font-size:.82rem;color:var(--ink);font-weight:600;margin-bottom:4px">"This is one of the most time-sensitive situations..."</div>
+          <div style="font-size:.75rem;color:var(--muted)">Stops the scroll. Creates urgency. Makes them read on.</div>
+        </div>
+        <div style="background:var(--amber-lt);border:1px solid #fde68a;border-radius:var(--r-lg);padding:14px">
+          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;color:var(--amber);margin-bottom:6px">2 — CLEAR ANSWER</div>
+          <div style="font-size:.82rem;color:var(--ink);font-weight:600;margin-bottom:4px">Bullet points. Plain language. Specific steps.</div>
+          <div style="font-size:.75rem;color:var(--muted)">Give real value. Don't tease. They need to actually learn something.</div>
+        </div>
+        <div style="background:var(--purple-lt);border:1px solid #c4b5fd;border-radius:var(--r-lg);padding:14px">
+          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;color:var(--purple);margin-bottom:6px">3 — AUTHORITY</div>
+          <div style="font-size:.82rem;color:var(--ink);font-weight:600;margin-bottom:4px">"I deal with this regularly..."</div>
+          <div style="font-size:.75rem;color:var(--muted)">Credibility without bragging. They need to trust you before clicking.</div>
+        </div>
+        <div style="background:var(--green-lt);border:1px solid #86efac;border-radius:var(--r-lg);padding:14px">
+          <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;color:var(--green);margin-bottom:6px">4 — SOFT CTA</div>
+          <div style="font-size:.82rem;color:var(--ink);font-weight:600;margin-bottom:4px">"Free tool that shows exactly what to file..."</div>
+          <div style="font-size:.75rem;color:var(--muted)">Free + specific + no pressure. Never say "buy" or "hire" here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- STEP 1 — TOPIC -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Step 1 — What topic are you responding to?</div></div>
+    <div class="card-body">
+      <div class="chip-row" id="topic-chips">
+        <div class="chip sel" data-topic="immigration" onclick="selTopic(this)"><div class="chip-icon">🛡️</div><span class="chip-name">Immigration Court</span><div class="chip-hint">Missed hearing · Reopen · Virtual</div></div>
+        <div class="chip" data-topic="divorce" onclick="selTopic(this)"><div class="chip-icon">📄</div><span class="chip-name">NY Divorce</span><div class="chip-hint">Cost · How to file · Uncontested</div></div>
+        <div class="chip" data-topic="will" onclick="selTopic(this)"><div class="chip-icon">📜</div><span class="chip-name">Will / Estate</span><div class="chip-hint">Dying without will · Probate · NY law</div></div>
+        <div class="chip" data-topic="prenup" onclick="selTopic(this)"><div class="chip-icon">💍</div><span class="chip-name">Prenup / Postnup</span><div class="chip-hint">Do I need one · Protection · Cost</div></div>
+        <div class="chip" data-topic="poa" onclick="selTopic(this)"><div class="chip-icon">📋</div><span class="chip-name">Power of Attorney</span><div class="chip-hint">Bank access · Incapacity · NY 2021 law</div></div>
+        <div class="chip" data-topic="quiz" onclick="selTopic(this)"><div class="chip-icon">🧠</div><span class="chip-name">General Legal Q</span><div class="chip-hint">What docs do I need · Free quiz · Protection score</div></div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- STEP 2 — PLATFORM -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Step 2 — Where are you posting?</div></div>
+    <div class="card-body">
+      <div class="plat-row">
+        <button class="pb sel-reddit" id="pb-reddit" onclick="selPlat('reddit')">🔴 Reddit</button>
+        <button class="pb" id="pb-quora" onclick="selPlat('quora')">🔵 Quora</button>
+        <button class="pb" id="pb-facebook" onclick="selPlat('facebook')">👥 Facebook</button>
+        <button class="pb" id="pb-tiktok" onclick="selPlat('tiktok')">🎵 TikTok</button>
+      </div>
+      <div style="background:var(--paper2);border-radius:var(--r-lg);padding:12px 14px;font-size:.82rem;color:var(--muted);line-height:1.6" id="plat-tip">
+        <strong style="color:var(--ink)">Reddit tip:</strong> Post in the correct subreddit (r/legaladvice, r/immigration, r/Divorce). Do NOT include a link in your first reply — Reddit flags this as spam. Give the answer first, mention the tool naturally. Links in comment body are fine if they appear organically in the flow of the answer.
+      </div>
+    </div>
+  </div>
+ 
+  <!-- STEP 3 — INTENT + VARIANT -->
+  <div class="card">
+    <div class="card-head">
+      <div><div class="card-title">Step 3 — Intent Score + Reply Angle</div><div class="card-sub">Only reply to HIGH intent posts. Choose which angle to use.</div></div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:10px"><strong style="color:var(--ink)">Intent Score — filter what you answer:</strong></p>
+      <div class="intent-row">
+        <div class="intent-chip ic-high sel" onclick="selIntent(this,'high')">🔴 HIGH — Answer immediately<br><span style="font-weight:400;font-size:.7rem">Posts with: "what do I do", "help", "urgent", "how much does", "how to file", "missed my court"</span></div>
+        <div class="intent-chip ic-med" onclick="selIntent(this,'med')">🟡 MEDIUM — Answer if time<br><span style="font-weight:400;font-size:.7rem">Posts with: "is this legal", "should I", "thinking about"</span></div>
+        <div class="intent-chip ic-low" onclick="selIntent(this,'low')">⚪ LOW — Skip<br><span style="font-weight:400;font-size:.7rem">General discussion, no specific problem, just chatting</span></div>
+      </div>
+      <div style="background:var(--red-lt);border:1px solid #fecaca;border-radius:var(--r);padding:10px 12px;font-size:.8rem;color:var(--red);font-weight:600;margin:8px 0 14px">
+        ⚠️ Only answer HIGH intent posts. MEDIUM and LOW waste your time. HIGH intent = someone with a real problem right now = they convert.
+      </div>
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:8px"><strong style="color:var(--ink)">Reply angle — 3 different approaches for the same topic:</strong></p>
+      <div class="variant-row" id="variant-row">
+        <button class="var-btn active" onclick="selVariant(0)">Angle 1 — Urgency first</button>
+        <button class="var-btn" onclick="selVariant(1)">Angle 2 — Step-by-step</button>
+        <button class="var-btn" onclick="selVariant(2)">Angle 3 — Myth-busting</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="genReply()" id="gen-btn">✨ Generate Reply</button>
+        <button class="btn btn-ghost" onclick="openSearch()" id="search-btn">🔍 Open Search Page →</button>
+      </div>
+      <div id="copied-msg" class="copied-msg">✓ Copied to clipboard!</div>
+      <div class="reply-box" id="reply-box">
+        <div class="reply-box-label">Ready to copy — you post this manually on the platform above</div>
+        <div class="reply-text" id="reply-text"></div>
+        <div class="reply-actions">
+          <button class="btn btn-green btn-sm" onclick="copyReply()">📋 Copy Reply</button>
+          <button class="btn btn-ghost btn-sm" onclick="openSearch()">🔍 Open Search Page</button>
+          <button class="btn btn-ghost btn-sm" onclick="markPosted()">✅ Mark Posted — Next Angle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- THREAD HIJACKING -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">🔥 Thread Hijacking — 3–5x Your Traffic</div><div class="card-sub">Don't just answer new posts. Find active threads with 50+ comments and add to them. Reddit boosts engagement on active threads.</div></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+          <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:6px">Strategy 1</div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:4px">Find active old threads</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.55">Search Reddit, sort by "Top" (past month). Find posts with 50+ comments still getting replies. Add: "One thing people are missing here is..." — your answer gets seen by everyone already engaged with the thread.</div>
+        </div>
+        <div style="background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+          <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Strategy 2</div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:4px">Edit comments 2hrs later</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.55">After posting, come back 2 hours later and add 1 sentence to your reply. Reddit's algorithm treats edited comments as fresh engagement. Add the CTA line you left out initially: "Free tool at EasyLegalFiling.com — no account needed."</div>
+        </div>
+        <div style="background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+          <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--purple);margin-bottom:6px">Strategy 3</div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:4px">2-comment approach</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.55">Post comment 1: Pure helpful answer, no link, no promotion. Post comment 2 (same thread, 10 min later): "Also — if you need the actual documents for this, there's a free tool at EasyLegalFiling.com." Two comments = twice the visibility. Reddit allows this if both add value.</div>
+        </div>
+      </div>
+      <div class="warn-box" style="margin-top:12px">⚠️ What to avoid: Never copy-paste the same exact reply to multiple threads in one day. Never post your link as the first sentence. Never post 10+ replies in one subreddit in one day. These trigger spam filters. Max 3–5 posts per subreddit per day.</div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     DAILY QUEUE
+═══════════════════════════════════ -->
+<div id="panel-queue" class="panel">
+  <div class="ph">
+    <h2>Daily Search Queue</h2>
+    <p>12 pre-built searches — different platforms, different topics. Check them off as you post. They rotate weekly so you never repeat. Your assistant can work through these without any decisions.</p>
+  </div>
+ 
+  <div class="card">
+    <div class="card-head">
+      <div><div class="card-title">Today's Searches — Work Through These In Order</div><div class="card-sub">Click "Open" to go to the search. Click "Generate" to get a reply. Click ✅ when posted. Do HIGH intent ones first.</div></div>
+      <div style="display:flex;gap:7px">
+        <button class="btn btn-ghost btn-sm" onclick="filterQueue('high')">🔴 HIGH only</button>
+        <button class="btn btn-ghost btn-sm" onclick="filterQueue('all')">Show All</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetQueue()">🔄 Reset</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="q-list" id="q-list"></div>
+    </div>
+  </div>
+ 
+  <!-- POST LOG -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Post Log — Track What You've Posted</div><div class="card-sub">Log each post so you never reply to the same thread twice. Your assistant fills this in daily.</div></div>
+    <div class="card-body">
+      <div class="log-row">
+        <input type="text" id="log-plat" placeholder="Platform" style="flex:1;min-width:110px;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r);font-size:.82rem;font-family:'DM Sans',sans-serif">
+        <input type="text" id="log-topic" placeholder="Topic" style="flex:1;min-width:110px;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r);font-size:.82rem;font-family:'DM Sans',sans-serif">
+        <input type="text" id="log-url" placeholder="Thread URL (paste from browser)" style="flex:3;min-width:180px;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r);font-size:.82rem;font-family:'DM Sans',sans-serif">
+        <button class="btn btn-primary btn-sm" onclick="addLog()">+ Log</button>
+      </div>
+      <div id="post-log"></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     AUTO-DISCOVERY (RSS + ZAPIER)
+═══════════════════════════════════ -->
+<div id="panel-rss" class="panel">
+  <div class="ph">
+    <h2>Automated Post Discovery</h2>
+    <p>Stop searching manually. These free tools bring new posts TO YOU automatically. Your assistant gets a Google Sheet of new questions every day — no searching required.</p>
+  </div>
+ 
+  <div class="card" style="border-color:var(--orange)">
+    <div class="card-head" style="background:var(--orange-lt)">
+      <div><div class="card-title">🚀 Option 1 — RSS Feeds (Free, No Account Needed)</div><div class="card-sub">Reddit has built-in RSS feeds for every subreddit. Connect to a free RSS reader and new posts come to you.</div></div>
+      <span style="background:var(--orange);color:#fff;font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:8px">FREE</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size:.86rem;font-weight:700;color:var(--ink);margin-bottom:8px">How it works:</p>
+      <div class="rss-flow">
+        <div class="rss-node highlight">Reddit RSS Feed<br><span style="font-size:.7rem;font-weight:400">/r/legaladvice/new/.rss</span></div>
+        <div class="rss-arrow">→</div>
+        <div class="rss-node">RSS Reader<br><span style="font-size:.7rem;font-weight:400">Feedly (free)</span></div>
+        <div class="rss-arrow">→</div>
+        <div class="rss-node highlight">New posts land in your inbox or app<br><span style="font-size:.7rem;font-weight:400">No searching ever again</span></div>
+      </div>
+ 
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:10px;margin-top:12px"><strong style="color:var(--ink)">GPS — Set up RSS in 5 minutes:</strong></p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+          <div style="font-size:.83rem;color:var(--muted);line-height:1.6"><strong style="color:var(--ink)">Go to feedly.com</strong> → Create free account → click "+ Follow" → paste each RSS URL below → Save. Done. New posts now appear in your Feedly feed automatically.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+          <div style="font-size:.83rem;line-height:1.6"><strong style="color:var(--ink)">RSS URLs to add (copy each one):</strong><br>
+          <div style="margin-top:6px;display:flex;flex-direction:column;gap:5px">
+            <div class="code-pre" style="padding:8px 12px;margin:0;font-size:.75rem">https://www.reddit.com/r/legaladvice/new/.rss</div>
+            <div class="code-pre" style="padding:8px 12px;margin:0;font-size:.75rem">https://www.reddit.com/r/immigration/new/.rss</div>
+            <div class="code-pre" style="padding:8px 12px;margin:0;font-size:.75rem">https://www.reddit.com/r/Divorce/new/.rss</div>
+            <div class="code-pre" style="padding:8px 12px;margin:0;font-size:.75rem">https://www.reddit.com/r/Estate_Planning/new/.rss</div>
+            <div class="code-pre" style="padding:8px 12px;margin:0;font-size:.75rem">https://www.reddit.com/r/relationship_advice/new/.rss</div>
+          </div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+          <div style="font-size:.83rem;color:var(--muted);line-height:1.6"><strong style="color:var(--ink)">Your assistant's daily routine:</strong> Open Feedly → Filter by keyword (type "divorce" or "missed court" in the search bar) → Look for HIGH intent posts (words like "help", "urgent", "what do I do", "how much") → Copy the post title + URL → Paste into your Google Sheet → Mark intent score: HIGH/MED/LOW → Send sheet to Ettrick daily.</div>
+        </div>
+      </div>
+      <a href="https://feedly.com" target="_blank" class="btn btn-orange" style="margin-top:12px;display:inline-flex">Set Up Feedly Free →</a>
+    </div>
+  </div>
+ 
+  <div class="card">
+    <div class="card-head">
+      <div><div class="card-title">🔧 Option 2 — Zapier Automation (Free Tier Available)</div><div class="card-sub">Automatically adds new Reddit posts to your Google Sheet. Your assistant just opens the sheet — no searching at all.</div></div>
+      <span style="background:var(--green);color:#fff;font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:8px">FREE TIER</span>
+    </div>
+    <div class="card-body">
+      <div class="rss-flow">
+        <div class="rss-node highlight">Reddit<br><span style="font-size:.7rem;font-weight:400">New posts in subreddit</span></div>
+        <div class="rss-arrow">→</div>
+        <div class="rss-node">Zapier<br><span style="font-size:.7rem;font-weight:400">Filters by keyword</span></div>
+        <div class="rss-arrow">→</div>
+        <div class="rss-node highlight">Google Sheet<br><span style="font-size:.7rem;font-weight:400">Row added automatically</span></div>
+        <div class="rss-arrow">→</div>
+        <div class="rss-node">You or assistant<br><span style="font-size:.7rem;font-weight:400">Score intent + use Generator</span></div>
+      </div>
+ 
+      <p style="font-size:.83rem;color:var(--muted);margin:12px 0 10px"><strong style="color:var(--ink)">GPS — Build the Zapier flow in 10 minutes:</strong></p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+          <div style="font-size:.83rem;line-height:1.6"><strong style="color:var(--ink)">Go to zapier.com</strong> → Create free account (free tier allows 100 tasks/month — enough for daily Reddit monitoring) → Click "Create Zap"</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+          <div style="font-size:.83rem;line-height:1.6"><strong style="color:var(--ink)">Trigger: RSS by Zapier</strong> → Feed URL: <span class="mono">https://www.reddit.com/r/legaladvice/new/.rss</span> → Click Continue</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+          <div style="font-size:.83rem;line-height:1.6"><strong style="color:var(--ink)">Add Filter step:</strong> Only continue if Title contains: divorce OR immigration OR will OR probate OR prenup OR "power of attorney" OR "missed court"</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div>
+          <div style="font-size:.83rem;line-height:1.6"><strong style="color:var(--ink)">Action: Google Sheets → Create Spreadsheet Row</strong> → Map fields: Post Title → Column A, Post URL → Column B, Date → Column C, leave Columns D/E/F blank (for intent score, status, assistant notes)</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--green-lt);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">✓</div>
+          <div style="font-size:.83rem;color:var(--green);line-height:1.6;font-weight:600"><strong>Turn on the Zap.</strong> From now on: every new Reddit post matching your keywords automatically appears in your Google Sheet. Your assistant opens the sheet, scores intent, you generate replies for HIGH ones only. Zero searching.</div>
+        </div>
+      </div>
+ 
+      <div class="info-box" style="margin-top:10px">💡 Set up one Zap per subreddit. With the free Zapier tier (100 tasks/month) you can monitor 2–3 subreddits. For more, use Feedly (Option 1) which has no task limit.</div>
+      <a href="https://zapier.com" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:10px">Open Zapier →</a>
+    </div>
+  </div>
+ 
+  <!-- GOOGLE SHEET STRUCTURE -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Google Sheet Structure — Intent-Scored Queue</div><div class="card-sub">This is the upgraded sheet with Intent Score column. Your assistant fills in columns A–E. You only look at HIGH intent rows.</div></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>A: Question/Post Title</th><th>B: Platform</th><th>C: Category</th><th>D: Intent Score</th><th>E: AI Answer</th><th>F: Priority</th><th>G: Status</th></tr></thead>
+        <tbody>
+          <tr style="background:var(--red-lt)">
+            <td>"Missed my immigration court date what do I do"</td>
+            <td>Reddit</td>
+            <td>Immigration</td>
+            <td><span class="ib ib-h">🔴 HIGH</span></td>
+            <td>← Use Generator → Paste here</td>
+            <td style="font-weight:700;color:var(--red)">Answer NOW</td>
+            <td>Posted ✓</td>
+          </tr>
+          <tr>
+            <td>"Is a prenup worth it in NY"</td>
+            <td>Quora</td>
+            <td>Prenup</td>
+            <td><span class="ib ib-m">🟡 MEDIUM</span></td>
+            <td>← Use Generator → Paste here</td>
+            <td>Answer today</td>
+            <td>Pending</td>
+          </tr>
+          <tr style="opacity:.5">
+            <td>"Discussion: prenup culture in 2025"</td>
+            <td>Reddit</td>
+            <td>Prenup</td>
+            <td><span class="ib ib-l">⚪ LOW</span></td>
+            <td>—</td>
+            <td style="color:var(--muted)">Skip</td>
+            <td>Skipped</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <a href="https://sheets.google.com/create" target="_blank" class="btn btn-green btn-sm">Create Google Sheet →</a>
+        <a href="https://zapier.com" target="_blank" class="btn btn-ghost btn-sm">Connect to Zapier →</a>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     ANALYTICS ACTIONS
+═══════════════════════════════════ -->
+<div id="panel-analytics" class="panel">
+  <div class="ph"><h2>Analytics → Actions</h2><p>Your GA tag G-R9TX80PX9B is already on your site. Here's how to read it and what each signal means.</p></div>
+ 
+  <div style="background:linear-gradient(135deg,#1a0838,#0a4a3a);border-radius:var(--r-xl);padding:22px;margin-bottom:18px;color:#fff">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:4px">Connect Google Analytics — One Time, 15 Minutes</h3>
+    <p style="font-size:.85rem;color:rgba(255,255,255,.65);margin-bottom:14px;line-height:1.65">Your tag is already firing on your site. You just need to log into the dashboard.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div><div style="font-size:.83rem;color:rgba(255,255,255,.75);line-height:1.6"><strong style="color:#fff">Go to analytics.google.com</strong> → sign in with the Google account you used when adding the tag. Your property should already show data.</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div><div style="font-size:.83rem;color:rgba(255,255,255,.75);line-height:1.6"><strong style="color:#fff">Reports → Acquisition → Traffic Acquisition</strong> — shows where your visitors are coming from: Organic, Direct, Social, Referral. Check weekly.</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div><div style="font-size:.83rem;color:rgba(255,255,255,.75);line-height:1.6"><strong style="color:#fff">Reports → Engagement → Pages and Screens</strong> — which pages are getting the most views. High-view pages = build more like them.</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div><div style="font-size:.83rem;color:rgba(255,255,255,.75);line-height:1.6"><strong style="color:#fff">Set up weekly email report:</strong> GA4 → Admin → Reporting Identity → Share report → set to weekly. Every Monday you get your traffic data automatically.</div></div>
+    </div>
+    <a href="https://analytics.google.com" target="_blank" class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3);display:inline-flex">Open Google Analytics →</a>
+  </div>
+ 
+  <div class="card">
+    <div class="card-head"><div class="card-title">What Your Data Is Telling You — Weekly Read</div></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>What You See in GA</th><th>What It Means</th><th>What To Do</th></tr></thead>
+        <tbody>
+          <tr><td>Page has 0 organic traffic after 2 weeks</td><td>Google doesn't see it, or H1 doesn't match searches</td><td>Ask Claude to rewrite the H1 + meta description to match what people actually search</td></tr>
+          <tr><td>Page gets views but visitors leave fast</td><td>CTA is too far down or not compelling</td><td>Move the main CTA button to the top 200px of the page</td></tr>
+          <tr><td>Immigration pages getting traffic</td><td>Highest-converting content</td><td>Build 5 more immigration pages (missed hearing, deportation, motion to reopen)</td></tr>
+          <tr><td>Reddit showing as referral source</td><td>Your replies are working</td><td>Double down on that subreddit and topic</td></tr>
+          <tr><td>Direct traffic only, no organic</td><td>Sitemap not submitted to Google yet</td><td>Submit sitemap to Search Console immediately (GPS Directions tab)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+ 
+  <div class="card">
+    <div class="card-head"><div class="card-title">Priority Actions Right Now — Zero Traffic State</div></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+          <div><div style="font-size:.87rem;font-weight:700;color:var(--ink);margin-bottom:2px">Submit sitemap to Google Search Console — TODAY</div><div style="font-size:.79rem;color:var(--muted);line-height:1.55">Without this Google doesn't know your legalguide pages exist. GPS directions in the GPS Directions tab. Takes 15 minutes one time.</div></div>
+          <span style="background:var(--red-lt);color:var(--red);font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0">Do Now</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+          <div><div style="font-size:.87rem;font-weight:700;color:var(--ink);margin-bottom:2px">Post 3 Reddit HIGH intent replies — TODAY</div><div style="font-size:.79rem;color:var(--muted);line-height:1.55">Go to Generator tab → pick Immigration → Reddit → Generate. Open search page. Find HIGH intent post. Copy reply. Paste it yourself. Mark posted. Repeat 3 times. Reddit shows results within hours.</div></div>
+          <span style="background:var(--red-lt);color:var(--red);font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0">Do Now</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+          <div><div style="font-size:.87rem;font-weight:700;color:var(--ink);margin-bottom:2px">Post 2 Quora answers — TODAY</div><div style="font-size:.79rem;color:var(--muted);line-height:1.55">Quora answers rank on Google for years. One good answer on "what happens if you die without a will in NY" will bring traffic in 2025 and 2026. Use the Quora template from the Generator. Post with your credential: "Ettrick Campbell, Esq. | EasyLegalFiling.com"</div></div>
+          <span style="background:var(--orange-lt);color:var(--orange-dk);font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0">Today</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--amber);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div>
+          <div><div style="font-size:.87rem;font-weight:700;color:var(--ink);margin-bottom:2px">Set up Feedly RSS feeds + Zapier — This week</div><div style="font-size:.79rem;color:var(--muted);line-height:1.55">Once these are running, your assistant receives new posts automatically and you never search manually again. GPS in the Auto-Discovery tab.</div></div>
+          <span style="background:var(--amber-lt);color:var(--amber);font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0">This Week</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     TEAM TASKS
+═══════════════════════════════════ -->
+<div id="panel-team" class="panel">
+  <div class="ph"><h2>Team Task System</h2><p>Your tasks vs. your assistant's tasks. Every task has GPS directions written out — your assistant needs zero legal knowledge.</p></div>
+ 
+  <div class="team-block">
+    <div class="team-hd">
+      <div class="team-av" style="background:var(--purple-lt)">⚖️</div>
+      <div><div class="team-name">Ettrick — Strategy & Heavy Lifting<span class="team-tag" style="background:var(--purple-lt);color:var(--purple)">You</span></div><div class="team-sub">Legal decisions, Claude sessions, content approval, service launches</div></div>
+    </div>
+    <div class="team-body">
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Submit sitemap to Google Search Console</strong><p>GPS Directions tab → Step 1. One time, 15 minutes. Unlocks all Google traffic.</p></div><span class="task-time">15 min</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Post 3 Reddit replies using Generator tab</strong><p>You do this yourself — higher authority replies from an attorney account convert better than assistant accounts. Use r/legaladvice, r/immigration, r/Divorce.</p></div><span class="task-time">15 min</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Post 2 Quora answers with your Esq. credential</strong><p>Your name + Esq. credential multiplies every Quora answer. Set up profile first (GPS tab). Use Quora templates from Generator.</p></div><span class="task-time">15 min</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Build 2 new SEO pages this week</strong><p>Ask Claude → paste to GitHub. Priority: missed-immigration-court-date.html, ask-a-lawyer-free.html. 5 min each.</p></div><span class="task-time">10 min</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Review weekly GA report + decide which topics to double down on</strong><p>Which Reddit topics got clicks to your site? Build SEO pages on those. Which pages got organic traffic? Build similar pages.</p></div><span class="task-time">10 min/week</span></div>
+    </div>
+  </div>
+ 
+  <div class="team-block">
+    <div class="team-hd">
+      <div class="team-av" style="background:var(--green-lt)">🤝</div>
+      <div><div class="team-name">Your Assistant — Simple Tasks, GPS Provided<span class="team-tag" style="background:var(--green-lt);color:var(--green)">No Legal Knowledge Required</span></div><div class="team-sub">Posting, monitoring, data entry, TikTok comments</div></div>
+    </div>
+    <div class="team-body">
+      <div class="info-box" style="margin-bottom:12px">Tell your assistant: "I have an app that generates all the replies. Your job is to find posts, paste the reply the app gives you, log the URL. You never need to know any law — I wrote all the replies."</div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Set up Feedly RSS feeds — Day 1 only</strong><p>GPS: Go to feedly.com → Create free account → Click "+ Follow" → paste these 5 URLs one by one: reddit.com/r/legaladvice/new/.rss, reddit.com/r/immigration/new/.rss, reddit.com/r/Divorce/new/.rss, reddit.com/r/Estate_Planning/new/.rss, reddit.com/r/relationship_advice/new/.rss → Save. Done. New posts now come to you automatically.</p></div><span class="task-time">10 min once</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Daily: Pull 20 posts from Feedly → Score intent → Log in Google Sheet</strong><p>GPS: Open Feedly → filter by keyword (type "missed court" or "divorce cost" or "no will" in search bar) → for each post that matches, score it: 🔴 HIGH if it has words like "help", "urgent", "what do I do", "how much", "missed" — 🟡 MEDIUM if it has "should I", "is it worth" — ⚪ LOW everything else → paste Title + URL + Intent Score into Google Sheet columns A/B/C/D → send sheet link to Ettrick daily on WhatsApp.</p></div><span class="task-time">20 min/day</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Daily: Post 5 replies on Reddit/Quora using the Generator</strong><p>GPS: Ettrick sends you a list of HIGH intent URLs each day (from the Google Sheet) → for each URL: open the page → open Command Center → click the right topic chip (immigration/divorce/etc.) → select platform (Reddit/Quora) → click Generate → click Copy Reply → go back to the post → click Reply → paste the text → click Post → copy the thread URL → paste it in the Google Sheet column E and mark Status as "Posted" → repeat for next URL. You post it manually — the app does not post for you.</p></div><span class="task-time">25 min/day</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Daily: Post 10 TikTok comments</strong><p>GPS: Open TikTok → search one of these terms: "divorce new york" / "immigration court" / "do I need a prenup" / "power of attorney" / "estate planning" → sort by Most Liked → on each video with 10k+ views, post one of these 3 comments (rotate them):<br><br>Comment A: "Most people don't know this — there's a free tool that tells you exactly which legal documents protect your situation. No email, no cost. It's called the Legal Document Quiz at EasyLegalFiling.com"<br><br>Comment B: "If you missed your immigration court date, don't panic — there's a motion to reopen it. EasyLegalFiling.com has the attorney-designed version. Act fast though."<br><br>Comment C: "The Relationship Protection Score at EasyLegalFiling.com shows exactly how legally protected your relationship is. Free, 2 minutes, no email required."<br><br>Log each video URL in Google Sheet. Max 10 comments per day — more triggers TikTok spam filter.</p></div><span class="task-time">15 min/day</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Weekly: Check which posts got the most upvotes/views</strong><p>GPS: Open Google Sheet → for each URL in column B → go to that Reddit/Quora post → check current upvote count → add to column F → note which topics/subreddits got the highest engagement → summarize in a WhatsApp message to Ettrick: "Best performing this week: [topic] on [platform] got X upvotes. Worst: [topic]. Recommend building more content about [topic]."</p></div><span class="task-time">20 min/week</span></div>
+      <div class="task"><div class="task-cb" onclick="toggleTask(this)"></div><div class="task-body"><strong>Weekly: Find new questions to add to queue</strong><p>GPS: Go to answerthepublic.com (free, 3 searches/day) → search "divorce new york" → screenshot → search "immigration court" → screenshot → search "power of attorney" → screenshot → send all 3 screenshots to Ettrick on WhatsApp. These become next week's new queue items.</p></div><span class="task-time">15 min/week</span></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     GPS DIRECTIONS
+═══════════════════════════════════ -->
+<div id="panel-gps" class="panel">
+  <div class="ph"><h2>GPS Directions — Every Step, Nothing Skipped</h2><p>Do these in order. Green = do once. Purple = do daily. Teal = do weekly.</p></div>
+ 
+  <div class="card">
+    <div class="card-head"><div class="card-title">🟠 One-Time Setup (Do These First)</div></div>
+    <div class="card-body">
+      <div class="gps-wrap">
+ 
+        <div class="gps-item">
+          <div class="gps-dot gd-once">1</div>
+          <div class="gps-content">
+            <h4>Google Search Console — Submit Sitemap</h4>
+            <p><strong>GPS:</strong> Go to <strong>search.google.com/search-console</strong> → Click "Add property" → choose "Domain" → type <span class="mono">easylegalfiling.com</span> → Continue → Google shows you a TXT record.</p>
+            <p><strong>Then:</strong> Open a new tab → log into your domain registrar (GoDaddy, Namecheap, etc.) → go to DNS settings → click "Add record" → Type: TXT → Name: @ → Value: paste what Google gave you → Save → back in Search Console → click Verify. Takes 5–10 min to propagate.</p>
+            <p><strong>Then submit sitemap:</strong> Left sidebar → Sitemaps → enter: <span class="mono">https://easylegalfiling.com/legalguide/sitemap.xml</span> → Submit.</p>
+            <p><strong>Then request indexing:</strong> Left sidebar → URL Inspection → paste <span class="mono">https://easylegalfiling.com</span> → click "Request Indexing" → repeat for divorce.html and immigration-court-relief.html.</p>
+            <div class="win-box">✅ After this: Google starts crawling your pages within 48 hours. This is the #1 most important thing you can do for traffic.</div>
+          </div>
+        </div>
+ 
+        <div class="gps-item">
+          <div class="gps-dot gd-once">2</div>
+          <div class="gps-content">
+            <h4>GitHub Action — Auto-Ping Google on Every Push</h4>
+            <p><strong>GPS:</strong> Go to <strong>github.com/ettrickc-dev/legalguide</strong> → click "Add file" → "Create new file" → in the filename box type this exactly (GitHub creates the folders automatically):</p>
+            <div class="code-pre"><span class="cm">.github/workflows/ping-google.yml</span></div>
+            <p><strong>Paste this in the content box:</strong></p>
+            <div class="code-pre"><span class="ky">name:</span> Ping Google on Push
+<span class="ky">on:</span>
+  push:
+    branches: [main]
+    paths: ['**.html', 'sitemap.xml']
+<span class="ky">jobs:</span>
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Google
+        run: curl -s "https://www.google.com/ping?sitemap=https://easylegalfiling.com/legalguide/sitemap.xml"
+      - name: Ping Bing
+        run: curl -s "https://www.bing.com/ping?sitemap=https://easylegalfiling.com/legalguide/sitemap.xml"</div>
+            <p>Click "Commit changes" (green button bottom right) → Done.</p>
+            <div class="win-box">✅ From now on: every time you push any HTML page or sitemap to GitHub, Google is automatically notified within 60 seconds. Set once, works forever.</div>
+            <div class="warn-box">⚠️ The path must be exactly: <span class="mono">.github/workflows/ping-google.yml</span> — the dot at the start and the two folder levels are required.</div>
+          </div>
+        </div>
+ 
+        <div class="gps-item">
+          <div class="gps-dot gd-once">3</div>
+          <div class="gps-content">
+            <h4>Google Apps Script — Weekly Search Email (Requires Trigger)</h4>
+            <p><strong>GPS Step 1:</strong> Go to <strong>script.google.com</strong> → click "New project" → delete all existing code → paste the code below → click the floppy disk icon to Save → name it "ELF Weekly Searches".</p>
+            <div class="code-pre"><span class="cm">// PASTE THIS IN script.google.com — then set trigger (Step 2 below)</span>
+<span class="ky">function</span> sendWeeklySearches() {
+  var week = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000)) % 4;
+  var searches = [
+    [<span class="cm">"Reddit: r/immigration - 'missed court date immigration'"</span>,
+     <span class="cm">"Reddit: r/legaladvice - 'uncontested divorce new york cost'"</span>,
+     <span class="cm">"Reddit: r/Divorce - 'divorce forms new york'"</span>,
+     <span class="cm">"Quora: 'what happens if you die without a will in new york'"</span>,
+     <span class="cm">"Quora: 'can immigration case be reopened'"</span>,
+     <span class="cm">"Facebook: search 'New York divorce support' group"</span>,
+     <span class="cm">"TikTok: comment on 'immigration court' videos"</span>],
+    [<span class="cm">"Reddit: r/legaladvice - 'power of attorney new york'"</span>,
+     <span class="cm">"Reddit: r/immigration - 'motion to reopen immigration'"</span>,
+     <span class="cm">"Reddit: r/personalfinance - 'what legal documents do I need'"</span>,
+     <span class="cm">"Quora: 'how much does divorce cost new york'"</span>,
+     <span class="cm">"Quora: 'do I need a prenup if no assets'"</span>,
+     <span class="cm">"Facebook: search 'NYC legal help' group"</span>,
+     <span class="cm">"TikTok: comment on 'do I need a prenup' videos"</span>],
+    [<span class="cm">"Reddit: r/Divorce - 'new york divorce attorney cost'"</span>,
+     <span class="cm">"Reddit: r/Estate_Planning - 'probate new york'"</span>,
+     <span class="cm">"Reddit: r/legaladvice - 'in absentia removal order'"</span>,
+     <span class="cm">"Quora: 'what is a power of attorney and do I need one'"</span>,
+     <span class="cm">"Quora: 'new york intestacy laws'"</span>,
+     <span class="cm">"Facebook: search 'immigration court help USA' group"</span>,
+     <span class="cm">"TikTok: comment on 'estate planning' videos"</span>],
+    [<span class="cm">"Reddit: r/relationship_advice - 'prenup worth it'"</span>,
+     <span class="cm">"Reddit: r/legaladvice - 'spouse incapacitated bank account'"</span>,
+     <span class="cm">"Reddit: r/immigration - 'deportation order how to fight'"</span>,
+     <span class="cm">"Quora: 'how to file for divorce in new york without lawyer'"</span>,
+     <span class="cm">"Quora: 'what happens when someone dies without estate plan'"</span>,
+     <span class="cm">"Facebook: search 'NY immigrants community' group"</span>,
+     <span class="cm">"TikTok: comment on 'divorce new york' videos"</span>]
+  ];
+  var body = "YOUR SEARCH QUEUE THIS WEEK:\n\n";
+  searches[week].forEach((s,i) => body += (i+1)+". "+s+"\n");
+  body += "\n\nOpen Command Center to generate replies for each search.";
+  MailApp.sendEmail({
+    to: Session.getActiveUser().getEmail(),
+    subject: "EasyLegalFiling — This Week's Search Queue",
+    body: body
+  });
+}</div>
+            <p style="margin-top:10px"><strong>GPS Step 2 — Setting the Trigger (YES, required):</strong></p>
+            <p>In the script editor → look at the left sidebar → click the ⏰ <strong>clock icon</strong> (it says "Triggers" when you hover). If you don't see it, click the three-line menu icon → Triggers.</p>
+            <p>Click <strong>+ Add Trigger</strong> (blue button, bottom right of the page).</p>
+            <p>Fill in the dialog exactly: <strong>Choose function:</strong> sendWeeklySearches → <strong>Deployment:</strong> Head → <strong>Event source:</strong> Time-driven → <strong>Type:</strong> Week timer → <strong>Day:</strong> Every Monday → <strong>Time:</strong> 8am to 9am → click <strong>Save</strong>.</p>
+            <p>Google shows a permissions warning → click <strong>"Review permissions"</strong> → choose your Google account → click <strong>"Advanced"</strong> (bottom left) → click <strong>"Go to ELF Weekly Searches (unsafe)"</strong> → click <strong>Allow</strong>. This is your own script — it's safe. Google warns for any new script.</p>
+            <p><strong>GPS Step 3 — Test it now:</strong> Back in script editor → click the ▶ Run button → check your email within 30 seconds. If you receive the search queue, the trigger will fire every Monday automatically.</p>
+            <div class="win-box">✅ Every Monday at 8am: email with 7 fresh searches. Rotates over 4 weeks = 28 unique searches before repeating.</div>
+          </div>
+        </div>
+ 
+        <div class="gps-item">
+          <div class="gps-dot gd-once">4</div>
+          <div class="gps-content">
+            <h4>Quora Profile — Do Before Your First Post</h4>
+            <p><strong>GPS:</strong> Go to <strong>quora.com</strong> → Create account → click your profile picture → Edit Profile → Name: <strong>Ettrick Campbell, Esq.</strong> → Credentials: <strong>Attorney | Founder, EasyLegalFiling.com | NY Legal Filing Systems</strong> → Bio: "I help everyday New Yorkers handle legal filings without paying attorney prices. Founder of EasyLegalFiling.com." → add professional photo → Save.</p>
+            <div class="win-box">✅ Set once. Your credential "Ettrick Campbell, Esq." appears next to every answer you post permanently. This multiplies click-through on every single answer.</div>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     AUTOMATION SETUP
+═══════════════════════════════════ -->
+<div id="panel-appscript" class="panel">
+  <div class="ph"><h2>Automation — What's Actually Possible</h2><p>Honest breakdown. Every automatable thing automated. What still needs a human and exactly why.</p></div>
+ 
+  <div class="card">
+    <div class="card-head"><div class="card-title">Complete Automation Map</div></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Task</th><th>Can Automate?</th><th>Tool</th><th>Setup</th></tr></thead>
+        <tbody>
+          <tr><td>New pages go live when pushed to GitHub</td><td class="yes">✅ Fully auto</td><td>GitHub Pages</td><td>Already done</td></tr>
+          <tr><td>Google notified of new pages</td><td class="yes">✅ Fully auto</td><td>GitHub Action (GPS Step 2)</td><td>5 min once</td></tr>
+          <tr><td>Weekly search queue emailed to you</td><td class="yes">✅ Fully auto</td><td>Apps Script + Trigger (GPS Step 3)</td><td>10 min once</td></tr>
+          <tr><td>GA weekly report emailed to you</td><td class="yes">✅ Fully auto</td><td>Google Analytics settings</td><td>3 min once</td></tr>
+          <tr><td>New Reddit posts pulled into Google Sheet</td><td class="yes">✅ Fully auto</td><td>Zapier RSS → Sheets (Auto-Discovery tab)</td><td>10 min once</td></tr>
+          <tr><td>Reply generation</td><td class="yes">✅ Fully auto</td><td>This Command Center</td><td>Open and click</td></tr>
+          <tr><td>Actually posting the reply</td><td class="no">❌ Manual — you or assistant</td><td>Copy from app → paste on Reddit/Quora/Facebook</td><td>2 min/reply</td></tr>
+          <tr><td>TikTok comments</td><td class="no">❌ Manual — you or assistant</td><td>3 scripts in Team tab, copy-paste</td><td>15 min/day</td></tr>
+          <tr><td>Intent scoring new posts</td><td class="partial">⚡ Semi — assistant does it</td><td>HIGH/MED/LOW in Google Sheet</td><td>20 min/day</td></tr>
+          <tr><td>New SEO pages</td><td class="partial">⚡ Semi — Claude + GitHub</td><td>Ask Claude, paste to GitHub</td><td>5 min/page</td></tr>
+        </tbody>
+      </table>
+      <div class="win-box" style="margin-top:10px">Bottom line: Searches come to you automatically (RSS/Zapier). Reply is generated in one click. You still paste and post it manually — but that takes under 2 minutes. Everything else is automated.</div>
+    </div>
+  </div>
+ 
+  <div class="card">
+    <div class="card-head"><div class="card-title">How to Launch This App — Save It Somewhere Permanent</div></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+          <div style="font-size:.83rem;line-height:1.65"><strong style="color:var(--ink)">Option A — Upload to GitHub (Recommended):</strong> Save this file as <span class="mono">command-center.html</span> → upload to your GitHub legalguide repo → it becomes live at <span class="mono">easylegalfiling.com/legalguide/command-center.html</span> → bookmark that URL. Open it every morning to run your daily routine.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+          <div style="font-size:.83rem;line-height:1.65"><strong style="color:var(--ink)">Option B — Run Locally:</strong> Double-click the HTML file on your computer. Opens in your browser. Your post log saves automatically in your browser's local storage so it's preserved between sessions.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:var(--paper2);border-radius:var(--r-lg)">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+          <div style="font-size:.83rem;line-height:1.65"><strong style="color:var(--ink)">Share with assistant:</strong> Send them the URL or the file. They use the Generator and Queue tabs. They do NOT need access to your GitHub or GA — just this app.</div>
+        </div>
+        <div class="win-box">Everything you do in this app (post log, checked tasks, queue progress) is saved in your browser automatically. If you upload to GitHub, you and your assistant can both use it from any device.</div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+ 
+<!-- ═══════════════════════════════════
+     TRAFFIC MACHINE — FULL LOOP
+═══════════════════════════════════ -->
+<div id="panel-machine" class="panel">
+  <div class="ph">
+    <h2>Your Traffic Machine — The Full Loop</h2>
+    <p>This is the complete system you are building. Every part connects. When all 7 stages run together, traffic compounds automatically every week.</p>
+  </div>
+ 
+  <!-- WHY IT WORKS — PSYCHOLOGY -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">🧠 Why This Works — The Psychology</div><div class="card-sub">Understanding this makes every reply you write more effective.</div></div>
+    <div class="card-body">
+      <div class="psychology-grid">
+        <div class="psych-card" style="background:var(--red-lt);border-color:#fecaca">
+          <div class="why-counter" style="color:var(--red)">1</div>
+          <div style="font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:5px">High-Intent Traffic</div>
+          <div style="font-size:.81rem;color:var(--muted);line-height:1.6">People on Reddit are confused, stressed, and searching for answers right now. They are not browsing — they have an active problem. You meet them exactly where they are, with the exact answer they need. This is why Reddit replies convert much better than ads.</div>
+        </div>
+        <div class="psych-card" style="background:var(--purple-lt);border-color:#c4b5fd">
+          <div class="why-counter" style="color:var(--purple)">2</div>
+          <div style="font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:5px">Authority Positioning</div>
+          <div style="font-size:.81rem;color:var(--muted);line-height:1.6">Your answers look helpful, not salesy. The reply gives real legal information first. The free tool mention comes naturally at the end. This makes you the trusted expert — not the advertiser. Trusted experts get clicks. Advertisers get ignored.</div>
+        </div>
+        <div class="psych-card" style="background:var(--green-lt);border-color:#86efac">
+          <div class="why-counter" style="color:var(--green)">3</div>
+          <div style="font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:5px">Compound Effect</div>
+          <div style="font-size:.81rem;color:var(--muted);line-height:1.6">Each Reddit and Quora answer stays online permanently. A reply you post today will bring traffic next month and next year. 100 answers = 100 permanent traffic sources. This is why consistency matters more than perfection — more answers = more traffic, forever.</div>
+        </div>
+        <div class="psych-card" style="background:var(--amber-lt);border-color:#fde68a">
+          <div class="why-counter" style="color:var(--amber)">4</div>
+          <div style="font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:5px">SEO Multiplier</div>
+          <div style="font-size:.81rem;color:var(--muted);line-height:1.6">Quora answers rank on Google. Reddit posts rank on Google. A good answer on "can immigration case be reopened" appears in Google results within days. The same questions also become SEO pages on your site. One question → Reddit reply + Quora answer + SEO page = 3 traffic sources from one topic.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- THE 7-STAGE MACHINE -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">🔁 The 7-Stage Traffic Machine — Every Stage Explained</div><div class="card-sub">Click the status badge on each stage to mark it active. Green = running. Orange = in progress. Gray = not started yet.</div></div>
+    <div class="card-body">
+      <div class="machine-flow">
+ 
+        <div class="mf-row">
+          <div class="mf-dot" style="background:var(--red)">1</div>
+          <div class="mf-card">
+            <div class="mf-layer" style="color:var(--red)">INPUT — Demand</div>
+            <div class="mf-title">Reddit + Quora feed your system with real questions</div>
+            <div class="mf-desc">People post legal questions on Reddit every minute. These are your leads. The RSS/Zapier setup (Auto-Discovery tab) pulls them into your Google Sheet automatically. No searching required once set up.</div>
+            <div class="mf-items">
+              <span class="mf-tag">r/legaladvice</span><span class="mf-tag">r/immigration</span><span class="mf-tag">r/Divorce</span><span class="mf-tag">Quora</span><span class="mf-tag">Facebook Groups</span>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+              <span style="font-size:.72rem;background:var(--green-lt);color:var(--green);padding:2px 8px;border-radius:8px;font-weight:700">✅ RSS feeds — set up in Auto-Discovery tab</span>
+              <span style="font-size:.72rem;background:var(--teal-lt);color:var(--teal);padding:2px 8px;border-radius:8px;font-weight:700">⚡ Zapier — set up in Auto-Discovery tab</span>
+            </div>
+          </div>
+        </div>
+ 
+        <div class="mf-row">
+          <div class="mf-dot" style="background:var(--orange)">2</div>
+          <div class="mf-card">
+            <div class="mf-layer" style="color:var(--orange)">PROCESSING — Filter</div>
+            <div class="mf-title">Questions → Google Sheet → Intent scored → HIGH only answered</div>
+            <div class="mf-desc">Your assistant opens the Google Sheet (auto-filled by Zapier), scores each post HIGH/MEDIUM/LOW based on urgency words, and marks the HIGH ones. You only answer HIGH intent posts — people with an active problem right now. Everything else is ignored. This is what makes your 20 minutes per day 5x more effective than spending 2 hours answering random posts.</div>
+            <div style="margin-top:8px;background:var(--paper2);border-radius:var(--r);padding:10px 12px;font-size:.79rem;color:var(--muted)"><strong style="color:var(--ink)">HIGH intent words to flag:</strong> "what do I do", "help", "urgent", "missed my court", "how much does", "how to file", "removal order", "freezing my account", "spouse in hospital"<br><strong style="color:var(--ink);margin-top:4px;display:block">Skip these:</strong> "discussing", "opinion", "what do you think", "interesting", "I wonder"</div>
+          </div>
+        </div>
+ 
+        <div class="mf-row">
+          <div class="mf-dot" style="background:var(--purple)">3</div>
+          <div class="mf-card">
+            <div class="mf-layer" style="color:var(--purple)">ANSWER — Generate</div>
+            <div class="mf-title">This app generates the reply — you copy and paste it</div>
+            <div class="mf-desc">Go to the Generator tab. Pick the topic. Pick the platform. Click Generate. Click Copy Reply. Go to the Reddit/Quora post. Click Reply. Paste the text. Click Post. That's it. The app does not post for you — you paste it manually. But everything else is automatic: the search, the reply structure, the CTA, the angle rotation so you never repeat yourself.</div>
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-xs" onclick="show('gen')">→ Go to Generator</button>
+              <button class="btn btn-ghost btn-xs" onclick="show('queue')">→ Go to Queue</button>
+            </div>
+          </div>
+        </div>
+ 
+        <div class="mf-row">
+          <div class="mf-dot" style="background:var(--teal)">4</div>
+          <div class="mf-card">
+            <div class="mf-layer" style="color:var(--teal)">TRAFFIC — Click-through</div>
+            <div class="mf-title">People read your reply → click your link → land on your site</div>
+            <div class="mf-desc">The reply gives a real, helpful answer with legal information. At the end it mentions the free tool. People click because it's free and solves their exact problem. They land on EasyLegalFiling.com. This is your traffic. Track where they come from in Google Analytics (Acquisition → Traffic Acquisition → filter by Social or Referral).</div>
+            <div class="win-box" style="margin-top:8px">📊 Track in GA: Reports → Acquisition → Traffic Acquisition. Look for "reddit.com" and "quora.com" under Referral. These are your reply clicks.</div>
+          </div>
+        </div>
+ 
+        <div class="mf-row">
+          <div class="mf-dot" style="background:var(--orange-dk)">5</div>
+          <div class="mf-card">
+            <div class="mf-layer" style="color:var(--orange-dk)">CONVERSION — Money</div>
+            <div class="mf-title">Visitor lands → clicks button → starts case or enters email</div>
+            <div class="mf-desc">Most visitors don't convert on first visit. Your conversion rate improves with: (1) clear CTA buttons on every page — "Start My Case Now", (2) free tools that capture email before the paid step, (3) the correct page structure shown in the Conversions tab. Right now you may have traffic but no clear action for people to take — the Conversions tab fixes this.</div>
+            <div style="margin-top:8px">
+              <button class="btn btn-orange btn-xs" onclick="show('convert')">→ Fix Conversions Now</button>
+            </div>
+          </div>
+        </div>
+ 
+        <div class="mf-row">
+          <div class="mf-dot" style="background:var(--green)">6</div>
+          <div class="mf-card">
+            <div class="mf-layer" style="color:var(--green)">FOLLOW-UP — Email</div>
+            <div class="mf-title">Email sequence follows up with visitors who didn't convert</div>
+            <div class="mf-desc">Most people don't convert on the first visit — industry average is 2–5%. With email capture you follow up 3–5 times. Email 1: their result or free tool output. Email 2: urgency reminder. Email 3: case study or testimonial. Email 4: offer. Email 5: last chance. This turns a 2% conversion rate into 8–15%. See the Email Capture tab for the complete setup GPS.</div>
+            <div style="margin-top:8px">
+              <button class="btn btn-green btn-xs" onclick="show('email')">→ Set Up Email Capture</button>
+            </div>
+          </div>
+        </div>
+ 
+        <div class="mf-row">
+          <div class="mf-dot" style="background:var(--purple-mid)">7</div>
+          <div class="mf-card">
+            <div class="mf-layer" style="color:var(--purple-mid)">OPTIMIZATION — Loop</div>
+            <div class="mf-title">Analytics shows what works → you do more of it → traffic grows</div>
+            <div class="mf-desc">Every week: check Google Analytics to see which topics brought the most traffic. Check your Google Sheet to see which intent scores got the most replies. Check which Quora answers got the most views. Do more of what's working. Stop doing what isn't. This is why the system gets better every week — each loop gives you data to improve the next one.</div>
+            <div class="win-box" style="margin-top:8px">🔁 The feedback loop: Reddit reply → traffic → GA data → more pages on winning topics → more traffic → more data. This compounds. Month 1 might bring 50 visitors. Month 3 brings 500. Month 6 brings 2,000. Each post you make today adds to the machine permanently.</div>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+ 
+  <!-- AUTOMATION LEVELS -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">🚀 Automation Levels — Where You Are vs. Where You're Going</div></div>
+    <div class="card-body">
+      <div class="level-row">
+        <div class="lv-dot" style="background:var(--green)">1</div>
+        <div style="flex:1"><div class="lv-title">Level 1 — Reply Generation ✅ Done</div><div class="lv-desc">Generator tab creates 3 angle variants per topic per platform. Click Generate. Click Copy. You post manually. Already built and working.</div></div>
+        <span class="auto-status as-done">✅ Active</span>
+      </div>
+      <div class="level-row">
+        <div class="lv-dot" style="background:var(--teal)">2</div>
+        <div style="flex:1"><div class="lv-title">Level 2 — Auto Question Feed ⚡ Ready to Set Up</div><div class="lv-desc">Zapier pulls Reddit posts into Google Sheet automatically. Your assistant scores intent. You only answer HIGH. Set up instructions in Auto-Discovery tab. Takes 10 minutes.</div></div>
+        <span class="auto-status as-ready">⚡ Set Up Now</span>
+      </div>
+      <div class="level-row">
+        <div class="lv-dot" style="background:var(--orange)">3</div>
+        <div style="flex:1"><div class="lv-title">Level 3 — Auto Priority Tagging 🔜 Next Step</div><div class="lv-desc">Upgrade the Google Apps Script to automatically detect urgency words in post titles and mark them HIGH/MEDIUM/LOW before your assistant even opens the sheet. GPS in the Automation Setup tab.</div></div>
+        <span class="auto-status as-next">🔜 Next</span>
+      </div>
+      <div class="level-row">
+        <div class="lv-dot" style="background:var(--orange)">4</div>
+        <div style="flex:1"><div class="lv-title">Level 4 — Email Capture + Auto Sequences 🔜 This Week</div><div class="lv-desc">Add email opt-in to free tools. Set up Mailchimp 3-email sequence. Turns one-time visitors into a list you own. Full GPS in Email Capture tab.</div></div>
+        <span class="auto-status as-next">🔜 This Week</span>
+      </div>
+      <div class="level-row">
+        <div class="lv-dot" style="background:var(--purple)">5</div>
+        <div style="flex:1"><div class="lv-title">Level 5 — SEO Page Auto-Creation 🔜 Advanced</div><div class="lv-desc">Take the top Reddit questions from your sheet → ask Claude to turn each one into a full SEO page → paste to GitHub. 5 minutes per page. Each page = a Google entry point that brings traffic forever.</div></div>
+        <span class="auto-status as-next">🔜 Advanced</span>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     CONVERSIONS — PAGE STRUCTURE
+═══════════════════════════════════ -->
+<div id="panel-convert" class="panel">
+  <div class="ph">
+    <h2>Conversions — Fix This Before More Traffic</h2>
+    <p>Right now your site might be getting visitors but they leave without acting. This tab gives you the exact page structure that converts visitors into clients. The rule: every page must answer "What should I do RIGHT NOW?"</p>
+  </div>
+ 
+  <div class="warn-box" style="margin-bottom:18px;font-size:.88rem">⚠️ Critical: More traffic to a page that doesn't convert is wasted traffic. Fix the page structure FIRST, then drive traffic. This is the #1 reason people get visitors but no revenue.</div>
+ 
+  <!-- PERFECT PAGE ANATOMY -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">🏗️ The Perfect Page Structure — Every Page Must Have These 5 Parts</div><div class="card-sub">In this exact order. Every paid service page and every free tool page follows this structure.</div></div>
+    <div class="card-body">
+      <div class="page-anatomy">
+ 
+        <div class="pa-row" style="border-color:#fecaca;background:var(--red-lt)">
+          <div class="pa-num" style="background:var(--red)">1</div>
+          <div style="flex:1">
+            <div class="pa-label">HEADLINE — Fear + Urgency (first thing they see)</div>
+            <div class="pa-tip">The headline must state the problem AND imply the solution. Never start with your company name or a vague description. Start with their problem.</div>
+            <div class="pa-example">✅ "Missed Immigration Court? You May Already Have a Removal Order"</div>
+            <div class="pa-example" style="background:var(--red-lt);color:var(--red)">❌ "Welcome to EasyLegalFiling" or "Immigration Services"</div>
+          </div>
+        </div>
+ 
+        <div class="pa-row" style="border-color:#fde68a;background:var(--amber-lt)">
+          <div class="pa-num" style="background:var(--amber)">2</div>
+          <div style="flex:1">
+            <div class="pa-label">SIMPLE STEPS — What they need to do (3 steps maximum)</div>
+            <div class="pa-tip">Show the path from where they are to where they want to be. Three steps maximum. Plain language. No legal jargon.</div>
+            <div class="pa-example">Step 1: Answer 5 questions about your situation → Step 2: See your completed motion → Step 3: Download and file</div>
+          </div>
+        </div>
+ 
+        <div class="pa-row" style="border-color:#86efac;background:var(--green-lt)">
+          <div class="pa-num" style="background:var(--green)">3</div>
+          <div style="flex:1">
+            <div class="pa-label">BIG CTA BUTTON — One action, above the fold, impossible to miss</div>
+            <div class="pa-tip">One button. One action. It must be visible without scrolling. The button text must say what happens when they click it — not just "Get Started."</div>
+            <div class="pa-example">✅ "Start My Case Now →" or "See My Completed Motion — Free →"</div>
+            <div class="pa-example" style="background:var(--red-lt);color:var(--red)">❌ "Learn More" or "Contact Us" or "Get Started"</div>
+          </div>
+        </div>
+ 
+        <div class="pa-row" style="border-color:#c4b5fd;background:var(--purple-lt)">
+          <div class="pa-num" style="background:var(--purple)">4</div>
+          <div style="flex:1">
+            <div class="pa-label">TRUST SIGNAL — Why you specifically, right below the button</div>
+            <div class="pa-tip">One line. Specific. Credibility-building. Must appear directly below or next to the CTA button.</div>
+            <div class="pa-example">✅ "Attorney-designed · Ettrick Campbell, Esq. · Used by thousands of NY filers"</div>
+            <div class="pa-example" style="background:var(--red-lt);color:var(--red)">❌ Paragraph of text about your company history</div>
+          </div>
+        </div>
+ 
+        <div class="pa-row" style="border-color:#99f6e4;background:var(--teal-lt)">
+          <div class="pa-num" style="background:var(--teal)">5</div>
+          <div style="flex:1">
+            <div class="pa-label">FREE TOOL HOOK — For people not ready to pay yet</div>
+            <div class="pa-tip">Always have a free option. People who aren't ready to pay will use the free tool. The free tool captures their email (see Email Capture tab). That email gets the follow-up sequence.</div>
+            <div class="pa-example">✅ "Not sure what you need? Check your situation free in 2 minutes →"</div>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+ 
+  <!-- CTA BUTTON CODE -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">🔧 Add This to Every CTA Button — Tracks Clicks in Google Analytics</div><div class="card-sub">This one line of code tells Google Analytics exactly which button was clicked, on which page. You will see this in GA → Reports → Engagement → Events.</div></div>
+    <div class="card-body">
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:12px">Add the <span class="mono">onclick</span> attribute to any button you want to track. Replace the event name in quotes with something descriptive.</p>
+      <div class="code-pre"><span class="cm"><!-- Immigration page CTA --></span>
+&lt;a href="https://easydivorcefiling.gavel.io/portal/bundles/0e91b989..." 
+   onclick="<span class="ky">gtag('event', 'reopen_case_click', {page: 'immigration'})</span>"&gt;
+  Reopen My Case Now →
+&lt;/a&gt;
+ 
+<span class="cm"><!-- Divorce page CTA --></span>
+&lt;a href="https://easydivorcefiling.gavel.io/portal/bundles/ea88bd85..." 
+   onclick="<span class="ky">gtag('event', 'divorce_start_click', {page: 'divorce'})</span>"&gt;
+  Start My Divorce Documents →
+&lt;/a&gt;
+ 
+<span class="cm"><!-- Free tool CTA --></span>
+&lt;a href="https://easylegalfiling.com/legaldocumentquiz/"
+   onclick="<span class="ky">gtag('event', 'free_quiz_click')</span>"&gt;
+  Take Free Quiz →
+&lt;/a&gt;</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:10px;line-height:1.6"><strong style="color:var(--ink)">Where to see results in Google Analytics:</strong> GA4 → Reports → Engagement → Events. You'll see each event name listed. The ones with the most counts = your highest-converting buttons. Build more pages like those.</p>
+      <div class="win-box" style="margin-top:8px">✅ Add this to every single button on your site. It costs nothing and tells you exactly which pages are making money. This is how you stop guessing and start knowing.</div>
+    </div>
+  </div>
+ 
+  <!-- PAGES THAT NEED FIXING NOW -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">📋 Your Pages — What to Fix on Each One</div></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Page</th><th>Current Problem</th><th>Fix — Do This</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>Homepage (index.html)</td><td>Hero headline may be too generic</td><td>Make sure H1 leads with a specific problem: "NY Legal Documents — Court-Ready in Minutes" and the first button visible without scrolling says "Find My Solution →"</td><td>15 min</td></tr>
+          <tr><td>Immigration Court Relief page</td><td>May not have urgency in headline</td><td>H1 must be: "Missed Your Immigration Court Date? Act Today." Button 1: "File Motion to Reopen Now →" must be above the fold.</td><td>10 min</td></tr>
+          <tr><td>Divorce page</td><td>Price may be buried</td><td>Show "$149 — Attorney-Designed NY Divorce Documents" in the first 200px. People need to see the price to decide to stay.</td><td>10 min</td></tr>
+          <tr><td>All free tool pages</td><td>No email capture before the tool</td><td>Add: "Enter your email to get your results" before showing the tool output. Email Capture tab has full GPS for this.</td><td>30 min with Mailchimp</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     EMAIL CAPTURE — COMPLETE SETUP
+═══════════════════════════════════ -->
+<div id="panel-email" class="panel">
+  <div class="ph">
+    <h2>Email Capture — The Missing Piece</h2>
+    <p>Most people don't convert on their first visit. Without email capture you lose them forever. With email you can follow up 3–5 times. Industry average: email follow-up turns a 2% conversion rate into 8–15%.</p>
+  </div>
+ 
+  <div class="info-box" style="margin-bottom:18px;font-size:.87rem;line-height:1.65">
+    💡 <strong>The simple rule:</strong> Whenever someone uses a free tool (ask a lawyer, quiz, relationship score, immigration safety check), capture their email before showing them the result. Say: "Enter your email to get your results." They type it in. You send the result. You now have a lead to follow up with.
+  </div>
+ 
+  <!-- MAILCHIMP SETUP GPS -->
+  <div class="card">
+    <div class="card-head">
+      <div><div class="card-title">📧 Set Up Mailchimp — Free, GPS Step-by-Step</div><div class="card-sub">Mailchimp free tier: up to 500 contacts, 1,000 emails/month — more than enough to start. Zero cost until you hit 500 subscribers.</div></div>
+      <span style="background:var(--green);color:#fff;font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:8px">FREE</span>
+    </div>
+    <div class="card-body">
+      <div class="email-steps">
+        <div class="es-row">
+          <div class="es-num" style="background:var(--orange)">1</div>
+          <div class="es-body"><strong>Create free Mailchimp account</strong><p>Go to mailchimp.com → click "Sign Up Free" → enter your email, username, password → verify your email. Choose the Free plan (do NOT enter credit card — Free plan is free forever up to 500 contacts).</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--orange)">2</div>
+          <div class="es-body"><strong>Create your Audience (contact list)</strong><p>After logging in: Audience → Manage Audiences → Create Audience → fill in: Audience name = "EasyLegalFiling Leads" → From name = "Ettrick Campbell, Esq." → From email = your email → Default subject = "Your Legal Question Results" → Save. This is where all email addresses will be stored.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--orange)">3</div>
+          <div class="es-body"><strong>Create signup form embed code</strong><p>Audience → Signup forms → Embedded forms → Select your audience → click "Embedded forms" → choose "Condensed" style → copy the HTML code Mailchimp gives you → this is what you paste into your site pages.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--orange)">4</div>
+          <div class="es-body"><strong>Add the form to your free tools pages</strong><p>Open your free tool page HTML (ask-a-lawyer, quiz, relationship score) → find where the tool result appears → paste the Mailchimp form HTML BEFORE the result → change the form headline to: "Enter your email to get your results — we'll also send a free legal protection checklist." → save → push to GitHub → page is live.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--orange)">5</div>
+          <div class="es-body"><strong>Test it yourself first</strong><p>Go to your page → enter a test email → submit → check that email arrives in your Mailchimp audience list → check that you received the confirmation email. If both happen, it's working.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--green)">✓</div>
+          <div class="es-body" style="color:var(--green)"><strong>Done — Email capture is live</strong><p style="color:var(--green)">Every person who uses your free tools now enters your email list. Move to Step 6: build the 3-email follow-up sequence below.</p></div>
+        </div>
+      </div>
+      <a href="https://mailchimp.com" target="_blank" class="btn btn-orange" style="margin-top:12px;display:inline-flex">Set Up Mailchimp Free →</a>
+    </div>
+  </div>
+ 
+  <!-- EMAIL SEQUENCE -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">📬 3-Email Follow-Up Sequence — Copy These Exactly</div><div class="card-sub">Set these up in Mailchimp as an automated sequence triggered when someone signs up. Mailchimp calls this a "Customer Journey" or "Automation." Free to set up.</div></div>
+    <div class="card-body">
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:14px"><strong style="color:var(--ink)">GPS — Set up automation in Mailchimp:</strong> Automations → Customer Journeys → Start from scratch → Trigger: "Joins audience" → Add 3 emails with the delays below → Turn on.</p>
+ 
+      <div class="seq-row">
+        <div class="seq-num" style="background:var(--orange)">1</div>
+        <div class="seq-card" style="background:var(--orange-lt);border-color:#fed7aa">
+          <div class="seq-day">Immediately after signup</div>
+          <div class="seq-subj">Subject: "Your legal situation — here's what you need to know"</div>
+          <div class="seq-body">Body: "Hi [First Name], thanks for using our free tool. Here's what your results mean for your situation: [insert their result or a summary]. The most important thing you can do right now is [specific action]. If you have questions, reply to this email or WhatsApp us at (718) 675-6729. — Ettrick Campbell, Esq., EasyLegalFiling.com"</div>
+        </div>
+      </div>
+ 
+      <div class="seq-row">
+        <div class="seq-num" style="background:var(--red)">2</div>
+        <div class="seq-card" style="background:var(--red-lt);border-color:#fecaca">
+          <div class="seq-day">3 days after signup</div>
+          <div class="seq-subj">Subject: "Most people who wait on this end up paying 10x more"</div>
+          <div class="seq-body">Body: "Hi [First Name], I wanted to follow up because the situation you asked about is time-sensitive. [1-2 sentence explanation of why waiting makes it worse — e.g., for immigration: 'Every day after a missed hearing makes the motion to reopen harder to grant.']. The attorney-designed solution is ready for you at EasyLegalFiling.com. It takes 10 minutes and costs [price] — a fraction of what an attorney charges. Start here: [link to relevant service page]"</div>
+        </div>
+      </div>
+ 
+      <div class="seq-row">
+        <div class="seq-num" style="background:var(--purple)">3</div>
+        <div class="seq-card" style="background:var(--purple-lt);border-color:#c4b5fd">
+          <div class="seq-day">7 days after signup</div>
+          <div class="seq-subj">Subject: "A client in your situation — what happened"</div>
+          <div class="seq-body">Body: "Hi [First Name], I want to share a quick story. A client came to us after missing their immigration court date [or: waiting 6 months to do their divorce / not having a will when their parent passed]. They thought it was too complicated and too expensive. They used our system instead — paid [price], had documents ready in [time], and [outcome: case was reopened / divorce was filed / estate was settled]. If you're ready, your documents are waiting: [link]. Questions? WhatsApp (718) 675-6729. — Ettrick"</div>
+        </div>
+      </div>
+ 
+      <div class="win-box" style="margin-top:8px">✅ This 3-email sequence runs automatically for every new subscriber forever. Set it up once. It works while you sleep. Each email that goes out is a potential conversion you would have missed without it.</div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════════
+     CLICK TRACKING
+═══════════════════════════════════ -->
+<div id="panel-tracking" class="panel">
+  <div class="ph">
+    <h2>Click Tracking — Know What's Making Money</h2>
+    <p>Right now you don't know which pages or buttons are converting. Add one line of code to each button and Google Analytics shows you exactly which clicks lead to revenue.</p>
+  </div>
+ 
+  <div class="warn-box" style="margin-bottom:18px;font-size:.88rem">⚠️ Without click tracking you're flying blind. You might be getting 500 visitors per month but have no idea which 3 pages they convert on. Tracking takes 30 minutes to set up and tells you where to focus your effort.</div>
+ 
+  <!-- ALL BUTTONS TO TRACK -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">📋 Every Button on Your Site — Tracking Code for Each One</div><div class="card-sub">Copy the onclick code from the right column and add it to the matching button in your HTML. Then push to GitHub. Results appear in GA within 24 hours.</div></div>
+    <div class="card-body">
+      <table class="track-table">
+        <thead><tr><th>Button / Link</th><th>Add This onclick= Code</th><th>Where to See in GA</th></tr></thead>
+        <tbody>
+          <tr><td>Reopen Immigration Case</td><td>gtag('event','reopen_case_click')</td><td>GA → Events → reopen_case_click</td></tr>
+          <tr><td>Motion to Appear Virtually</td><td>gtag('event','virtual_motion_click')</td><td>GA → Events → virtual_motion_click</td></tr>
+          <tr><td>Immigration Safety Check (free)</td><td>gtag('event','imm_safety_check')</td><td>GA → Events → imm_safety_check</td></tr>
+          <tr><td>Divorce Done-For-You ($149)</td><td>gtag('event','divorce_dfy_click')</td><td>GA → Events → divorce_dfy_click</td></tr>
+          <tr><td>Divorce DIY</td><td>gtag('event','divorce_diy_click')</td><td>GA → Events → divorce_diy_click</td></tr>
+          <tr><td>Prenup ($149)</td><td>gtag('event','prenup_click')</td><td>GA → Events → prenup_click</td></tr>
+          <tr><td>Postnup ($149)</td><td>gtag('event','postnup_click')</td><td>GA → Events → postnup_click</td></tr>
+          <tr><td>Estate Case ($149)</td><td>gtag('event','estate_click')</td><td>GA → Events → estate_click</td></tr>
+          <tr><td>Free Prenup Risk Check</td><td>gtag('event','prenup_risk_click')</td><td>GA → Events → prenup_risk_click</td></tr>
+          <tr><td>Inheritance Tool (free)</td><td>gtag('event','inheritance_click')</td><td>GA → Events → inheritance_click</td></tr>
+          <tr><td>Ask a Lawyer (free)</td><td>gtag('event','ask_lawyer_click')</td><td>GA → Events → ask_lawyer_click</td></tr>
+          <tr><td>Legal Document Quiz (free)</td><td>gtag('event','quiz_click')</td><td>GA → Events → quiz_click</td></tr>
+          <tr><td>Relationship Score (free)</td><td>gtag('event','rel_score_click')</td><td>GA → Events → rel_score_click</td></tr>
+          <tr><td>WhatsApp button</td><td>gtag('event','whatsapp_click')</td><td>GA → Events → whatsapp_click</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+ 
+  <!-- HOW TO ADD TO INDEX.HTML GPS -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">🔧 GPS — How to Add Tracking to Your Homepage</div><div class="card-sub">Exact steps, nothing skipped. Do this once for index.html, then repeat for other pages.</div></div>
+    <div class="card-body">
+      <div class="email-steps">
+        <div class="es-row">
+          <div class="es-num" style="background:var(--purple)">1</div>
+          <div class="es-body"><strong>Go to github.com/ettrickc-dev/legalguide → open index.html</strong><p>Click the file → click the pencil icon (Edit this file) in the top right. You are now editing the file directly in GitHub. No downloads needed.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--purple)">2</div>
+          <div class="es-body"><strong>Use Ctrl+F (or Cmd+F on Mac) to find each button</strong><p>Search for the Gavel URL of each button. For example, search for: ea88bd85 (that's the divorce DFY bundle). Find the &lt;a href="..."&gt; tag for that button.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--purple)">3</div>
+          <div class="es-body"><strong>Add onclick attribute to the tag</strong><p>Find: <span class="mono">&lt;a href="https://easydivorcefiling.gavel.io/portal/bundles/ea88bd85..."&gt;</span><br>Change to: <span class="mono">&lt;a href="https://easydivorcefiling.gavel.io/portal/bundles/ea88bd85..." onclick="gtag('event','divorce_dfy_click')"&gt;</span></p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--purple)">4</div>
+          <div class="es-body"><strong>Repeat for every button in the table above</strong><p>Go through each row in the tracking table. Find the button. Add the onclick code. Takes about 2 minutes per button once you know what you're doing.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--purple)">5</div>
+          <div class="es-body"><strong>Commit changes (saves + deploys automatically)</strong><p>Scroll to bottom of GitHub edit page → click "Commit changes" → type message: "Add click tracking to all buttons" → click green "Commit changes" button. GitHub Pages redeploys in 60 seconds. Done.</p></div>
+        </div>
+        <div class="es-row">
+          <div class="es-num" style="background:var(--purple)">6</div>
+          <div class="es-body"><strong>Verify in Google Analytics</strong><p>Go to analytics.google.com → Reports → Realtime → Events. Open your site in another tab and click a tracked button. You should see the event appear in realtime in GA within 30 seconds. If it appears, tracking is working.</p></div>
+        </div>
+      </div>
+      <div class="win-box" style="margin-top:10px">✅ After this: every button click on your site is recorded in GA. After 2 weeks you'll know which buttons get the most clicks and which pages are actually converting. This tells you exactly where to focus your SEO and Reddit/Quora efforts.</div>
+    </div>
+  </div>
+ 
+  <!-- HOW TO READ EVENTS IN GA -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">📊 How to Read Your Event Data in Google Analytics</div></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg);align-items:flex-start">
+          <div style="font-weight:800;font-size:.85rem;color:var(--orange);flex-shrink:0">Step 1</div>
+          <div style="font-size:.82rem;color:var(--muted)"><strong style="color:var(--ink)">Go to analytics.google.com</strong> → sign in → click on your EasyLegalFiling property → click Reports (left sidebar)</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg);align-items:flex-start">
+          <div style="font-weight:800;font-size:.85rem;color:var(--orange);flex-shrink:0">Step 2</div>
+          <div style="font-size:.82rem;color:var(--muted)"><strong style="color:var(--ink)">Reports → Engagement → Events.</strong> You see a list of all event names. The number next to each = how many times that button was clicked in the selected time period.</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg);align-items:flex-start">
+          <div style="font-weight:800;font-size:.85rem;color:var(--orange);flex-shrink:0">Step 3</div>
+          <div style="font-size:.82rem;color:var(--muted)"><strong style="color:var(--ink)">The event with the most clicks = your most popular CTA.</strong> The event with the fewest clicks = either nobody sees that button, or the page getting the most traffic isn't the one with that button. Build more pages like your high-click pages.</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:var(--paper2);border-radius:var(--r-lg);align-items:flex-start">
+          <div style="font-weight:800;font-size:.85rem;color:var(--orange);flex-shrink:0">Step 4</div>
+          <div style="font-size:.82rem;color:var(--muted)"><strong style="color:var(--ink)">Every Monday:</strong> Note which events had the most counts that week. The top 2–3 events = your converting pages. Drive more Reddit/Quora traffic to those pages specifically. Stop spending time on pages with 0 events.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+</main>
+</div><!-- end layout -->
+ 
+<!-- MOBILE NAV -->
+<div class="mob-nav">
+  <button class="mob-tab active" onclick="show('gen')"><span class="mob-tab-icon">✍️</span>Generate</button>
+  <button class="mob-tab" onclick="show('queue')"><span class="mob-tab-icon">📋</span>Queue</button>
+  <button class="mob-tab" onclick="show('rss')"><span class="mob-tab-icon">📡</span>Auto</button>
+  <button class="mob-tab" onclick="show('analytics')"><span class="mob-tab-icon">📊</span>Data</button>
+  <button class="mob-tab" onclick="show('team')"><span class="mob-tab-icon">👥</span>Team</button>
+  <button class="mob-tab" onclick="show('gps')"><span class="mob-tab-icon">📍</span>GPS</button>
+  <button class="mob-tab" onclick="show('machine')"><span class="mob-tab-icon">🔁</span>System</button>
+  <button class="mob-tab" onclick="show('convert')"><span class="mob-tab-icon">💰</span>Convert</button>
+</div>
+ 
+<button class="scroll-top" id="scr" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+ 
+<script>
+// ── DATE ──
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+ 
+// ── NAVIGATION ──
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.slink,.mob-tab').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.slink,.mob-tab').forEach(b => {
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').includes('\''+ id +'\'')) b.classList.add('active');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+ 
+// ── TOPIC ──
+let curTopic = 'immigration', curPlat = 'reddit', curVariant = 0;
+function selTopic(el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  curTopic = el.dataset.topic;
+  updatePlatTip();
+}
+function selPlat(p) {
+  curPlat = p;
+  document.querySelectorAll('.pb').forEach(b => { b.className = 'pb'; });
+  document.getElementById('pb-'+p).classList.add('pb','sel-'+p);
+  updatePlatTip();
+}
+function selVariant(v) {
+  curVariant = v;
+  document.querySelectorAll('.var-btn').forEach((b,i) => b.classList.toggle('active', i===v));
+}
+function selIntent(el, level) {
+  document.querySelectorAll('.intent-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+ 
+const platTips = {
+  reddit: '<strong style="color:var(--ink)">Reddit tip:</strong> Post in the correct subreddit. Do NOT include a bare link as your first sentence — Reddit flags this as spam. Give a real, helpful answer first. Mention the free tool naturally in the flow of the answer. Links are fine when they appear organically.',
+  quora: '<strong style="color:var(--ink)">Quora tip:</strong> Links ARE allowed in Quora answers — include them naturally in the text. Your credential "Ettrick Campbell, Esq. | EasyLegalFiling.com" appears at the bottom of every answer automatically once set up. Quora answers rank on Google for years.',
+  facebook: '<strong style="color:var(--ink)">Facebook tip:</strong> In Facebook groups, be conversational and helpful first. Links are generally allowed but some groups require 3+ posts before you can post links. If a group blocks your link, put it in a follow-up comment instead.',
+  tiktok: '<strong style="color:var(--ink)">TikTok tip:</strong> You're posting a COMMENT on someone else's video — not your own video. Find videos about divorce, immigration, prenups with 10k+ views. Post one of the 3 TikTok comment scripts. Max 10 comments per day to avoid spam filter.'
+};
+function updatePlatTip() {
+  document.getElementById('plat-tip').innerHTML = platTips[curPlat] || '';
+}
+ 
+// ── REPLIES DATA ──
+const replies = {
+  immigration: {
+    reddit: [
+      `This is urgent — the clock starts the moment the in absentia order is issued.
+ 
+Here's exactly what needs to happen:
+ 
+1. A Motion to Reopen asks the judge to vacate the removal order and reschedule
+2. You need to explain why you missed the hearing (medical emergency, lack of notice, etc.)
+3. Supporting documentation strengthens the motion significantly
+ 
+The most critical factor is speed. Courts look much more favorably on motions filed within days vs. weeks of the missed hearing.
+ 
+Attorney-designed motions specifically for this situation are available at easyimmigrationfiling.com — the free Immigration Safety Check there will tell you exactly what your situation requires first. Don't wait on this.`,
+ 
+      `Missing an immigration court date is serious but fixable — especially if you act quickly.
+ 
+The legal mechanism is called a Motion to Reopen. It does three things:
+• Asks the judge to vacate the in absentia removal order
+• Explains the reason for your absence
+• Requests a new hearing date
+ 
+What courts look for: Was the absence due to exceptional circumstances? Did you act promptly after missing the date? The sooner you file, the stronger your position.
+ 
+I've seen cases reopened successfully months after the missed date, but the best outcomes happen when people file within the first week.
+ 
+For the correct motion format, EasyLegalFiling.com has attorney-designed motions for exactly this situation. There's also a free safety check at easyimmigrationfiling.com that shows what you need to file first.`,
+ 
+      `Three things happen when you miss immigration court:
+ 
+1. Judge issues an in absentia order of removal (you're ordered deported without being present)
+2. Your bond, if any, may be forfeited
+3. Voluntary departure rights are lost
+ 
+None of this is permanent if you act fast. The Motion to Reopen is your tool — it's a formal request to the immigration judge to reschedule and vacate the order. Filing it same-week gives you the best odds.
+ 
+What you need in the motion: Your A-number, the date of the missed hearing, the specific reason you weren't there, and supporting documentation.
+ 
+EasyLegalFiling.com has the attorney-designed version of this motion. The free immigration safety check at easyimmigrationfiling.com takes 2 minutes and tells you your specific options.`
+    ],
+    quora: [
+      `Yes — but the window to act effectively narrows every day you wait.
+ 
+When you miss an immigration hearing, the immigration judge typically issues an order of removal in absentia under INA §240(b)(5). This is a deportation order issued in your absence.
+ 
+To address it, you file a Motion to Reopen. The motion must:
+• Identify your case (full name, A-number, court location)
+• State the date of the missed hearing
+• Explain the specific reason for your absence
+• Attach supporting documentation
+ 
+The legal standards for reopening:
+1. Exceptional circumstances (serious illness, emergency, documented reason)
+2. Failure to receive proper notice of the hearing
+3. Joint motion with ICE/DHS (rare, but possible in some cases)
+ 
+Timing is critical. Courts regularly grant well-prepared motions filed promptly. The same motion filed two months later faces a much higher bar.
+ 
+Attorney-designed Motion to Reopen forms are available at EasyLegalFiling.com (Immigration Court Relief section). The free Immigration Safety Check at easyimmigrationfiling.com will tell you which specific form your situation requires.
+ 
+— Ettrick Campbell, Esq. | EasyLegalFiling.com`,
+ 
+      `The short answer: Yes, an immigration case can be reopened after a missed hearing. The process is called filing a Motion to Reopen.
+ 
+Here's what that means in practice:
+ 
+The in absentia removal order: When you don't appear at a scheduled immigration hearing, the judge issues this order. It's an order of removal (deportation) issued without you present.
+ 
+The Motion to Reopen: This is a formal request to the immigration judge to vacate (cancel) the in absentia order and reschedule the case. It's your legal mechanism for correcting what happened.
+ 
+What makes a strong motion:
+→ Filing quickly (within days, not weeks, of the missed hearing)
+→ A documented, credible reason for the absence
+→ Showing you were otherwise complying with immigration proceedings
+ 
+What makes a weak motion:
+→ Filing months after the missed date with no explanation for the delay
+→ Vague reasons without documentation
+→ Prior history of missed hearings
+ 
+The attorney-designed Motion to Reopen at EasyLegalFiling.com covers all required elements. Free Immigration Safety Check at easyimmigrationfiling.com shows your specific situation first.
+ 
+— Ettrick Campbell, Esq. | EasyLegalFiling.com`
+    ],
+    facebook: [
+      `This is fixable — but please act today, not tomorrow.
+ 
+When you miss immigration court, the judge issues a removal order without you present. The legal tool to address this is a Motion to Reopen — it asks the judge to cancel that order and reschedule.
+ 
+What the motion needs:
+✅ Your A-number and case details
+✅ Date of missed hearing
+✅ Reason you couldn't attend
+✅ Any documentation supporting that reason
+ 
+Courts grant these regularly when filed quickly and prepared correctly. The longer you wait, the harder it becomes.
+ 
+The free Immigration Safety Check at easyimmigrationfiling.com tells you exactly what your situation requires. The attorney-designed motion is at EasyLegalFiling.com → Immigration Court Relief.
+ 
+Feel free to message with questions — I'm an attorney and this is exactly what I help people with.`,
+    ],
+    tiktok: [`Most people don't know this about missing immigration court — the case isn't automatically over. There's a motion to reopen it. EasyLegalFiling.com has the attorney-designed version. Act fast though.`]
+  },
+  divorce: {
+    reddit: [
+      `Here's the real breakdown for an uncontested NY divorce (both agree):
+ 
+Court fees: ~$210 to file + ~$125 for the final packet = ~$335 total to the court
+Document prep: $149 at a document service vs. $3,000–8,000+ for an attorney
+ 
+The forms are public and the court doesn't care who prepared them — only that they're correct. The ones that get rejected are usually missing a notarized signature or have the wrong county.
+ 
+For context: LegalZoom charges $499 for the same thing. EasyLegalFiling.com does it for $149 with NY-specific forms (not generic).
+ 
+Key: You need to file in the county where you or your spouse currently live. The forms are identical statewide — just the county name changes.
+ 
+What county are you filing in? The timeline varies by county.`,
+ 
+      `Two types of uncontested divorce in NY:
+ 
+Consent divorce: Spouse agrees, signs the Affidavit of Defendant, doesn't need to appear in court. Fastest option — no waiting period after all docs are signed.
+ 
+Default divorce: Spouse is served but doesn't respond within 20 days (NY) or 30 days (out of state). You wait 40 days after service, then proceed without them. Takes longer but works the same way.
+ 
+Both produce identical final documents — a Judgment of Divorce signed by a judge.
+ 
+Total cost: ~$335 court fees + document preparation. NY divorce attorney fees start at $3,000 minimum for an uncontested case.
+ 
+EasyLegalFiling.com does NY-specific divorce documents for $149. Free to start — you see the completed documents before paying.`
+    ],
+    quora: [
+      `For an uncontested New York divorce, here's the exact cost breakdown:
+ 
+Court fees:
+• Index Number (filing fee): approximately $210
+• Final packet filing fee: approximately $125
+• Total court fees: approximately $335
+ 
+Document preparation:
+• Self-prepared: $0 (but error rate is high; rejected packets cost time + re-filing fees)
+• Document service (like EasyLegalFiling.com): $149
+• Attorney-prepared: $2,500–$8,000+ for a straightforward uncontested case
+ 
+Optional costs:
+• Notary: $0–$25 per signature (many banks notarize for free for account holders)
+• Process server (if default divorce): $75–$150
+ 
+Total realistic range: $335–$560 for a truly uncontested divorce using a document service.
+ 
+For context: New York Supreme Court filing fees are set by the state and non-negotiable. The only variable is who prepares your paperwork.
+ 
+The most common reason costs go up: rejected filings. A single rejected packet costs you time plus the re-filing fee. Using attorney-designed documents (available at EasyLegalFiling.com for $149) eliminates this risk.
+ 
+— Ettrick Campbell, Esq. | EasyLegalFiling.com`
+    ],
+    facebook: [`NY uncontested divorce real costs: ~$335 in court fees (fixed by the state) + document prep. Attorney: $3,000+. Document service like EasyLegalFiling.com: $149. The documents are the same — only the price for preparation differs. Free to start at EasyLegalFiling.com.`],
+    tiktok: [`NY divorce reality: court fees are only ~$335. What costs thousands is who fills out the forms. EasyLegalFiling.com does it for $149. Free to start — you see your documents before paying anything.`]
+  },
+  will: {
+    reddit: [
+      `New York's intestacy law (EPTL §4-1.1) kicks in — and it rarely matches what people actually wanted.
+ 
+Spouse + children: Spouse gets first $50,000 + half of everything remaining. Kids split the other half. Many couples are surprised their spouse doesn't automatically get everything.
+ 
+Spouse, no children: Spouse gets everything.
+ 
+No spouse, children: Children split everything equally.
+ 
+No spouse, no children: Parents → siblings → more distant relatives.
+ 
+Long-term partner you're not married to: Gets NOTHING. Zero. Legally. Regardless of how long you were together.
+ 
+Minor children: A judge decides guardianship. Not your family. A judge.
+ 
+A basic NY will takes about 10 minutes using a document system. EasyLegalFiling.com has a free preview — you see your completed will before paying $49 to download. Worth doing this weekend.`
+    ],
+    quora: [
+      `In New York, dying without a will activates the intestacy statute (Estates, Powers and Trusts Law §4-1.1). Here's exactly what happens to your property:
+ 
+Married with children: Your spouse receives the first $50,000 of your net estate plus one-half of the remainder. Your children (in equal shares) receive the other half. This surprises many people — their spouse does not receive everything.
+ 
+Married without children: Entire estate to your spouse.
+ 
+Unmarried with children: Entire estate divided equally among your children.
+ 
+No spouse, no children: Estate goes to your parents equally, then to your siblings, then to more distant relatives as specified in the statute.
+ 
+Unmarried long-term partner: Receives nothing under intestacy law, regardless of relationship length or cohabitation. This is the situation that causes the most post-death disputes.
+ 
+What the will controls that intestacy doesn't:
+• Who serves as Executor (vs. court appointment)
+• Who is named as Guardian for minor children (vs. judge's decision)
+• Specific bequests of particular items to particular people
+• Trusts for minor children
+ 
+A properly executed New York will requires: your signature at the end, two witnesses (not beneficiaries), signed within 30 days of each other. Notarization is not required for validity but the self-proving affidavit (included in most document packages) makes probate faster.
+ 
+Free will preview at EasyLegalFiling.com/legalguide/will-new-york.html — you see your completed document before paying anything.
+ 
+— Ettrick Campbell, Esq. | EasyLegalFiling.com`
+    ],
+    facebook: [`Dying without a will in NY = the state decides everything. Your long-term partner gets nothing. A judge picks your kids' guardian. Your spouse might not get everything you'd expect. A will takes 10 minutes. Free preview at EasyLegalFiling.com.`],
+    tiktok: [`If you die without a will in New York, your long-term partner gets legally nothing. A judge decides who raises your kids. It takes 10 minutes to fix this. Free Will preview at EasyLegalFiling.com.`]
+  },
+  prenup: {
+    reddit: [
+      `The "I don't have enough to protect" reasoning costs people the most.
+ 
+A prenup doesn't protect what you have now — it protects:
+• Future income and career growth (could be significant)
+• Inheritance you haven't received yet
+• A business you might start after the marriage
+• Protection from your future spouse's debt
+• What happens if one of you dies (not just divorces)
+ 
+The people who most regret not having one aren't those who married wealthy. They're the ones who became successful AFTER the marriage with no protection in place.
+ 
+Also: prenups are increasingly being used to clearly define financial responsibilities during the marriage, not just at dissolution. This reduces conflict significantly.
+ 
+Free Prenup Risk Check at EasyLegalFiling.com shows exactly what risk you're running. Takes 5 minutes, no cost.`
+    ],
+    quora: [
+      `Whether you "need" a prenuptial agreement depends on your specific situation, but the standard "I don't have enough to protect" reasoning is often wrong.
+ 
+What a prenup actually protects (beyond current assets):
+1. Future earnings — especially relevant if one party's career is expected to significantly outpace the other's
+2. Anticipated inheritance — family wealth not yet received but expected
+3. Business interests — if either party might start a business after the marriage
+4. Debt protection — clearly establishing which debts are individual vs. marital
+5. Estate rights — determining what happens to property if one spouse dies (not just divorces)
+ 
+When a prenup is clearly valuable:
+→ Significant disparity in assets or earnings potential
+→ Children from a prior relationship
+→ Expected inheritance from family
+→ Either party owns or co-owns a business
+→ Significant student loan or other pre-existing debt on one side
+ 
+When it's less critical:
+→ Both parties have roughly equal financial situations
+→ Both have minimal assets and similar debt levels
+→ No children, no business, no expected inheritance
+ 
+The free Prenup Risk Check at EasyLegalFiling.com takes 5 minutes and tells you specifically what protection gaps exist in your situation.
+ 
+— Ettrick Campbell, Esq. | EasyLegalFiling.com`
+    ],
+    facebook: [`"We don't need a prenup, we have nothing to protect." The people who regret not having one aren't rich people — they're people who became successful AFTER getting married with no protection. Free risk check: EasyLegalFiling.com`],
+    tiktok: [`Most couples who regret not having a prenup weren't wealthy when they got married. They became successful afterward with zero legal protection. Free risk check at EasyLegalFiling.com takes 2 minutes.`]
+  },
+  poa: {
+    reddit: [
+      `This is the most overlooked legal document and the one that causes the most family crises.
+ 
+Without a POA: If you become incapacitated (surgery, accident, stroke — anything), no one — not your spouse, not your adult children, not your parents — has automatic legal authority to access your bank accounts, pay your mortgage, or handle your finances.
+ 
+They'd have to petition a court for guardianship. That takes 3–6 months and costs $3,000–$10,000+.
+ 
+A durable POA takes 5 minutes to create and costs nothing to start. Under NY's 2021 law, it's even more powerful — banks face sanctions for refusing a properly executed NY POA.
+ 
+Free preview of a completed NY Power of Attorney at EasyLegalFiling.com — you see the document with your name filled in before paying $49 to download.`
+    ],
+    quora: [
+      `Without a Power of Attorney, the consequences of incapacity can be severe and expensive for your family.
+ 
+What happens without a POA:
+Under New York law (and most states), there is no automatic authority for a spouse, child, or family member to manage your finances if you become incapacitated. Joint accounts are an exception, but individually-held accounts, real estate, investments, and business interests require explicit legal authority.
+ 
+Your family would need to file for guardianship (called a conservatorship in some states). This court process: takes 3–6 months minimum, costs $3,000–$10,000+ in legal fees, requires medical evidence and court hearings, and results in ongoing court oversight.
+ 
+What a Durable POA does differently:
+• Immediate legal authority — activated precisely when your family needs it most
+• No court involvement required
+• Specifically designed to survive incapacity (unlike a non-durable POA)
+• Under New York's 2021 law, banks must honor a properly executed statutory POA or face legal sanctions
+ 
+Free preview at EasyLegalFiling.com — see your completed NY Power of Attorney before paying anything.
+ 
+— Ettrick Campbell, Esq. | EasyLegalFiling.com`
+    ],
+    facebook: [`Without a Power of Attorney in NY, your spouse literally cannot access your individual bank accounts if you're incapacitated. Courts and thousands in fees to get that authority. A POA costs $49 and 5 minutes. Free preview at EasyLegalFiling.com.`],
+    tiktok: [`Quick test: If you had a stroke tomorrow, who can access YOUR bank accounts? Not joint accounts — YOUR accounts. If you don't have a Power of Attorney, the answer is nobody without going to court first. Free preview at EasyLegalFiling.com.`]
+  },
+  quiz: {
+    reddit: [
+      `Most people need more legal protection than they realize — and don't know it until something goes wrong.
+ 
+The baseline most adults should have:
+1. Will — controls what happens to your property and who raises your kids
+2. Power of Attorney — gives someone financial authority if you can't act
+3. Health Care Proxy — tells doctors who makes decisions if you can't speak
+ 
+Beyond that it depends on your situation:
+• In a relationship? Add relationship protection documents (prenup/postnup)
+• Have significant assets or a business? Estate planning becomes critical
+• Immigration situation? Keep that current
+ 
+The free Legal Document Quiz at easylegalfiling.com/legaldocumentquiz tells you exactly which of these apply to YOUR situation in 2 minutes. No email, no account. Just answers.`
+    ],
+    quora: [
+      `The legal documents you need depend on your life stage, but most adults are underprotected in at least 2–3 areas.
+ 
+The universal baseline (every adult):
+1. Last Will and Testament — controls property distribution, names your Executor, designates Guardian for minor children
+2. Durable Power of Attorney — authorizes someone to manage your finances if incapacitated
+3. Health Care Proxy / Advance Directive — authorizes someone to make medical decisions, states your end-of-life wishes
+ 
+Additional based on situation:
+4. Prenuptial or Postnuptial Agreement — if married or engaged with any financial disparity
+5. Living Trust — if estate size, privacy, or avoiding probate is a concern
+6. Business succession documents — if you own a business
+7. Beneficiary designations review — not a document per se, but often more important than the will for retirement accounts and life insurance
+ 
+The most common gap I see: people have a will but no Power of Attorney. The POA is actually MORE urgent in most day-to-day scenarios because incapacity (accident, surgery, illness) is far more common than death during working years.
+ 
+Free quiz at easylegalfiling.com/legaldocumentquiz that identifies your specific gaps in 2 minutes.
+ 
+— Ettrick Campbell, Esq. | EasyLegalFiling.com`
+    ],
+    facebook: [`Most adults need 3 legal documents minimum and have zero. Will + Power of Attorney + Health Care Proxy. The free Legal Document Quiz at EasyLegalFiling.com tells you exactly which ones you're missing in 2 minutes. No email required.`],
+    tiktok: [`90% of people don't have the 3 basic legal documents that protect their family. The free Legal Document Quiz at EasyLegalFiling.com tells you exactly which ones you need in 2 minutes. Zero cost, no email.`]
+  }
+};
+ 
+ 
+// ── SEARCH URLS ──
+const searchUrls = {
+  immigration: {
+    reddit: 'https://www.reddit.com/r/immigration/search/?q=missed+court+date&sort=new',
+    quora: 'https://www.quora.com/search?q=can+immigration+case+be+reopened',
+    facebook: 'https://www.facebook.com/search/groups/?q=immigration+court+help',
+    tiktok: 'https://www.tiktok.com/search?q=missed+immigration+court'
+  },
+  divorce: {
+    reddit: 'https://www.reddit.com/r/Divorce/search/?q=new+york+divorce+cost&sort=new',
+    quora: 'https://www.quora.com/search?q=how+much+does+divorce+cost+new+york',
+    facebook: 'https://www.facebook.com/search/groups/?q=ny+divorce+support',
+    tiktok: 'https://www.tiktok.com/search?q=divorce+new+york'
+  },
+  will: {
+    reddit: 'https://www.reddit.com/r/legaladvice/search/?q=die+without+will+new+york&sort=new',
+    quora: 'https://www.quora.com/search?q=what+happens+die+without+will+new+york',
+    facebook: 'https://www.facebook.com/search/groups/?q=estate+planning+help',
+    tiktok: 'https://www.tiktok.com/search?q=do+I+need+a+will'
+  },
+  prenup: {
+    reddit: 'https://www.reddit.com/r/relationship_advice/search/?q=prenup+worth+it&sort=new',
+    quora: 'https://www.quora.com/search?q=do+I+need+a+prenup+if+no+assets',
+    facebook: 'https://www.facebook.com/search/groups/?q=prenup+advice',
+    tiktok: 'https://www.tiktok.com/search?q=do+I+need+a+prenup'
+  },
+  poa: {
+    reddit: 'https://www.reddit.com/r/legaladvice/search/?q=power+of+attorney+new+york&sort=new',
+    quora: 'https://www.quora.com/search?q=what+happens+without+power+of+attorney',
+    facebook: 'https://www.facebook.com/search/groups/?q=NY+legal+help',
+    tiktok: 'https://www.tiktok.com/search?q=power+of+attorney'
+  },
+  quiz: {
+    reddit: 'https://www.reddit.com/r/personalfinance/search/?q=what+legal+documents+do+I+need&sort=new',
+    quora: 'https://www.quora.com/search?q=what+legal+documents+do+adults+need',
+    facebook: 'https://www.facebook.com/search/groups/?q=NYC+legal+help',
+    tiktok: 'https://www.tiktok.com/search?q=legal+documents+everyone+needs'
+  }
+};
+ 
+function generateReply(regenerate) {
+  if(regenerate) replyVariant++;
+  const pool = replies[selectedTopic]?.[selectedPlatform];
+  if(!pool || pool.length === 0) {
+    alert('No reply template for this combination yet. Try a different topic or platform.');
+    return;
+  }
+  const text = pool[replyVariant % pool.length];
+  document.getElementById('reply-output').style.display = 'block';
+  document.getElementById('reply-text').textContent = text;
+  document.getElementById('reply-output').scrollIntoView({behavior:'smooth',block:'center'});
+}
+ 
+function copyReply() {
+  const text = document.getElementById('reply-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const s = document.getElementById('copy-status');
+    s.classList.add('show');
+    setTimeout(() => s.classList.remove('show'), 2500);
+  });
+}
+ 
+function openSearchUrl() {
+  const url = searchUrls[selectedTopic]?.[selectedPlatform];
+  if(url) window.open(url, '_blank');
+}
+ 
+function markPosted() {
+  const btn = event.target;
+  btn.textContent = '✅ Posted!';
+  btn.style.color = 'var(--green)';
+  replyVariant++;
+  setTimeout(() => { btn.textContent = '✅ Mark as Posted'; btn.style.color = ''; }, 2000);
+}
+ 
+// ── SEARCH QUEUE ──
+const queueData = [
+  {platform:'reddit',text:'r/immigration — "missed court date immigration"',sub:'Search for posts from last 7 days, few replies',url:'https://www.reddit.com/r/immigration/search/?q=missed+court+date&sort=new',topic:'immigration',done:false},
+  {platform:'quora',text:'Quora — "can an immigration case be reopened after missed hearing"',sub:'Find questions with 10+ followers, under 10 answers',url:'https://www.quora.com/search?q=immigration+case+reopened+missed+hearing',topic:'immigration',done:false},
+  {platform:'reddit',text:'r/legaladvice — "uncontested divorce new york cost"',sub:'High volume, very specific intent',url:'https://www.reddit.com/r/legaladvice/search/?q=uncontested+divorce+new+york&sort=new',topic:'divorce',done:false},
+  {platform:'quora',text:'Quora — "what happens if you die without a will in new york"',sub:'Millions of Quora views, your answer ranks on Google',url:'https://www.quora.com/search?q=die+without+will+new+york',topic:'will',done:false},
+  {platform:'facebook',text:'Facebook — "NY divorce support" group',sub:'Join and answer 2 questions from today',url:'https://www.facebook.com/search/groups/?q=ny+divorce+support',topic:'divorce',done:false},
+  {platform:'reddit',text:'r/personalfinance — "what legal documents do I need"',sub:'Entry point for your free quiz and ask-a-lawyer',url:'https://www.reddit.com/r/personalfinance/search/?q=what+legal+documents+do+I+need&sort=new',topic:'quiz',done:false},
+  {platform:'reddit',text:'r/relationship_advice — "prenup worth it no assets"',sub:'Common question, your risk check is the perfect answer',url:'https://www.reddit.com/r/relationship_advice/search/?q=prenup+worth+it&sort=new',topic:'prenup',done:false},
+  {platform:'quora',text:'Quora — "do I need a power of attorney"',sub:'Universal question, high Google ranking potential',url:'https://www.quora.com/search?q=do+I+need+a+power+of+attorney',topic:'poa',done:false},
+  {platform:'facebook',text:'Facebook — "immigration court help USA" group',sub:'Urgent audience, immigration motion converts highly',url:'https://www.facebook.com/search/groups/?q=immigration+court+help+usa',topic:'immigration',done:false},
+  {platform:'reddit',text:'r/Divorce — "divorce forms new york where to get"',sub:'People ready to file right now',url:'https://www.reddit.com/r/Divorce/search/?q=divorce+forms+new+york&sort=new',topic:'divorce',done:false},
+  {platform:'quora',text:'Quora — "how much does a prenup cost in new york"',sub:'Price-sensitive searchers — your $149 is the answer',url:'https://www.quora.com/search?q=how+much+does+prenup+cost+new+york',topic:'prenup',done:false},
+  {platform:'facebook',text:'Facebook — "NYC legal help" group',sub:'Broad group, catch any legal question',url:'https://www.facebook.com/search/groups/?q=NYC+legal+help',topic:'quiz',done:false},
+];
+ 
+ 
+// ── GENERATE REPLY ──
+function genReply() {
+  const pool = replies[curTopic]?.[curPlat];
+  if(!pool||!pool.length) { alert('No template for this combination yet. Try Angle 1 on Reddit or Quora.'); return; }
+  const txt = pool[curVariant % pool.length];
+  const box = document.getElementById('reply-box');
+  document.getElementById('reply-text').textContent = txt;
+  box.style.display = 'block';
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function copyReply() {
+  navigator.clipboard.writeText(document.getElementById('reply-text').textContent).then(() => {
+    const m = document.getElementById('copied-msg');
+    m.classList.add('show');
+    setTimeout(() => m.classList.remove('show'), 2500);
+  });
+}
+function openSearch() {
+  const url = searchUrls[curTopic]?.[curPlat];
+  if(url) window.open(url,'_blank');
+  else alert('No search URL for this combination.');
+}
+function markPosted() {
+  curVariant++;
+  document.querySelectorAll('.var-btn').forEach((b,i) => b.classList.toggle('active', i===(curVariant%3)));
+  const btn = event.target;
+  btn.textContent = '✅ Posted! Next angle loaded.';
+  setTimeout(() => { btn.textContent = '✅ Mark Posted — Next Angle'; }, 2000);
+}
+ 
+// ── QUEUE ──
+const queueData = [
+  {platform:'reddit',text:'r/immigration — "missed court date immigration"',sub:'Search for posts from last 7 days, few replies',url:'https://www.reddit.com/r/immigration/search/?q=missed+court+date&sort=new',topic:'immigration',done:false},
+  {platform:'quora',text:'Quora — "can an immigration case be reopened after missed hearing"',sub:'Find questions with 10+ followers, under 10 answers',url:'https://www.quora.com/search?q=immigration+case+reopened+missed+hearing',topic:'immigration',done:false},
+  {platform:'reddit',text:'r/legaladvice — "uncontested divorce new york cost"',sub:'High volume, very specific intent',url:'https://www.reddit.com/r/legaladvice/search/?q=uncontested+divorce+new+york&sort=new',topic:'divorce',done:false},
+  {platform:'quora',text:'Quora — "what happens if you die without a will in new york"',sub:'Millions of Quora views, your answer ranks on Google',url:'https://www.quora.com/search?q=die+without+will+new+york',topic:'will',done:false},
+  {platform:'facebook',text:'Facebook — "NY divorce support" group',sub:'Join and answer 2 questions from today',url:'https://www.facebook.com/search/groups/?q=ny+divorce+support',topic:'divorce',done:false},
+  {platform:'reddit',text:'r/personalfinance — "what legal documents do I need"',sub:'Entry point for your free quiz and ask-a-lawyer',url:'https://www.reddit.com/r/personalfinance/search/?q=what+legal+documents+do+I+need&sort=new',topic:'quiz',done:false},
+  {platform:'reddit',text:'r/relationship_advice — "prenup worth it no assets"',sub:'Common question, your risk check is the perfect answer',url:'https://www.reddit.com/r/relationship_advice/search/?q=prenup+worth+it&sort=new',topic:'prenup',done:false},
+  {platform:'quora',text:'Quora — "do I need a power of attorney"',sub:'Universal question, high Google ranking potential',url:'https://www.quora.com/search?q=do+I+need+a+power+of+attorney',topic:'poa',done:false},
+  {platform:'facebook',text:'Facebook — "immigration court help USA" group',sub:'Urgent audience, immigration motion converts highly',url:'https://www.facebook.com/search/groups/?q=immigration+court+help+usa',topic:'immigration',done:false},
+  {platform:'reddit',text:'r/Divorce — "divorce forms new york where to get"',sub:'People ready to file right now',url:'https://www.reddit.com/r/Divorce/search/?q=divorce+forms+new+york&sort=new',topic:'divorce',done:false},
+  {platform:'quora',text:'Quora — "how much does a prenup cost in new york"',sub:'Price-sensitive searchers — your $149 is the answer',url:'https://www.quora.com/search?q=how+much+does+prenup+cost+new+york',topic:'prenup',done:false},
+  {platform:'facebook',text:'Facebook — "NYC legal help" group',sub:'Broad group, catch any legal question',url:'https://www.facebook.com/search/groups/?q=NYC+legal+help',topic:'quiz',done:false},
+];
+ 
+ 
+const intentMap = {immigration:'high',divorce:'high',will:'med',prenup:'med',poa:'high',quiz:'low'};
+let queue = JSON.parse(localStorage.getItem('elf_q') || 'null') || queueData.map((q,i)=>({...q,id:i,intent:intentMap[q.topic]||'med'}));
+let queueFilter = 'all';
+ 
+document.getElementById('q-badge').textContent = queue.filter(q=>!q.done).length;
+function saveQueue(){localStorage.setItem('elf_q',JSON.stringify(queue));}
+function resetQueue(){queue.forEach(q=>q.done=false);saveQueue();renderQueue();}
+function filterQueue(f){queueFilter=f;renderQueue();}
+ 
+function renderQueue(){
+  const el = document.getElementById('q-list');
+  let items = queue;
+  if(queueFilter==='high') items = queue.filter(q=>q.intent==='high');
+  el.innerHTML = '';
+  items.forEach((item,i) => {
+    const realIdx = queue.indexOf(item);
+    const ibClass = {high:'ib-h',med:'ib-m',low:'ib-l'}[item.intent]||'ib-l';
+    const ibLabel = {high:'🔴 HIGH',med:'🟡 MED',low:'⚪ LOW'}[item.intent]||'⚪';
+    const div = document.createElement('div');
+    div.className = 'q-item'+(item.done?' done':'');
+    div.innerHTML = `
+      <div class="q-meta">
+        <span class="q-plat ${item.platform}">${{reddit:'🔴 Reddit',quora:'🔵 Quora',facebook:'👥 Facebook',tiktok:'🎵 TikTok'}[item.platform]||item.platform}</span>
+        <span class="q-text">${item.text}</span>
+        <span class="q-sub">${item.sub}</span>
+      </div>
+      <span class="ib ${ibClass}">${ibLabel}</span>
+      <div class="q-btns">
+        <button class="btn btn-ghost btn-xs" onclick="window.open('${item.url}','_blank')">🔍 Open</button>
+        <button class="btn btn-primary btn-xs" onclick="useQ(${realIdx})">✍️ Generate</button>
+        <button class="btn btn-ghost btn-xs" onclick="doneQ(${realIdx})">${item.done?'↩️':'✅'}</button>
+      </div>`;
+    el.appendChild(div);
+  });
+  document.getElementById('q-badge').textContent = queue.filter(q=>!q.done).length;
+}
+ 
+function useQ(i){
+  const item = queue[i];
+  curTopic = item.topic;
+  curPlat = item.platform;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('sel',c.dataset.topic===curTopic));
+  document.querySelectorAll('.pb').forEach(b=>b.className='pb');
+  const pb = document.getElementById('pb-'+curPlat);
+  if(pb) pb.classList.add('pb','sel-'+curPlat);
+  updatePlatTip();
+  show('gen');
+  setTimeout(genReply, 150);
+}
+function doneQ(i){queue[i].done=!queue[i].done;saveQueue();renderQueue();}
+renderQueue();
+ 
+// ── POST LOG ──
+let postLog = JSON.parse(localStorage.getItem('elf_log')||'[]');
+function addLog(){
+  const plat=document.getElementById('log-plat').value.trim();
+  const topic=document.getElementById('log-topic').value.trim();
+  const url=document.getElementById('log-url').value.trim();
+  if(!plat&&!topic) return;
+  postLog.unshift({date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),plat,topic,url});
+  localStorage.setItem('elf_log',JSON.stringify(postLog.slice(0,50)));
+  renderLog();
+  ['log-plat','log-topic','log-url'].forEach(id=>document.getElementById(id).value='');
+}
+function renderLog(){
+  const el=document.getElementById('post-log');
+  if(!postLog.length){el.innerHTML='<p style="font-size:.82rem;color:var(--muted);padding:10px 0">No posts logged yet.</p>';return;}
+  el.innerHTML=`<table class="log-table"><thead><tr><th>Date</th><th>Platform</th><th>Topic</th><th>URL</th></tr></thead><tbody>`+
+    postLog.map(e=>`<tr><td>${e.date}</td><td>${e.plat}</td><td>${e.topic}</td><td><a href="${e.url}" target="_blank" style="color:var(--purple);font-size:.77rem">${e.url?e.url.slice(0,45)+'...':' — '}</a></td></tr>`).join('')+
+    '</tbody></table>';
+}
+renderLog();
+ 
+// ── TASKS ──
+function toggleTask(el){
+  el.classList.toggle('done');
+  const t=el.closest('.task');
+  t.style.opacity=el.classList.contains('done')?'0.45':'1';
+}
+ 
+// ── SCROLL TOP ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('scr').classList.toggle('show',window.scrollY>400);
+},{passive:true});
+</script>
+</body>
+</html>
